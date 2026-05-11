@@ -4,6 +4,7 @@ import AddBook from "./pages/addBook";
 import AddCategory from "./pages/addCategory";
 import AddUser from "./pages/addUser";
 import AddPlan from "./pages/addPlan";
+import AddSubscription from "./pages/addSubscription";
 
 function App() {
   const [books, setBooks] = useState([]);
@@ -22,6 +23,7 @@ function App() {
     { id: "categories", label: "🏷️ Categories", component: <AddCategory /> },
     { id: "users", label: "👥 Users", component: <AddUser /> },
     { id: "plans", label: "💎 Plans", component: <AddPlan /> },
+    { id: "subscriptions", label : "Subscriptions", component: <AddSubscription />}
   ];
 
   return (
@@ -63,7 +65,6 @@ function App() {
         </p>
       </header>
 
-      {/* Navigation */}
       <nav
         style={{
           background: "white",
@@ -123,7 +124,6 @@ function App() {
         </div>
       </nav>
 
-      {/* Main Content */}
       <main
         style={{
           maxWidth: "1200px",
@@ -131,7 +131,6 @@ function App() {
           padding: "3rem 2rem",
         }}
       >
-        {/* Books Overview Card */}
         <div
           style={{
             background: "white",
@@ -315,7 +314,6 @@ function App() {
           </div>
         </div>
 
-        {/* Active Section Content */}
         <div
           style={{
             background: "white",
@@ -329,7 +327,6 @@ function App() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer
         style={{
           background: "#2d3748",
@@ -353,8 +350,7 @@ function App() {
               margin: "0",
             }}
           >
-            © 2026 Library Management System. Built with modern technology for
-            educational excellence.
+            © 2026 Library Management System.
           </p>
         </div>
       </footer>
