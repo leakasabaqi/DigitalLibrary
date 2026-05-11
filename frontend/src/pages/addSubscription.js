@@ -126,7 +126,6 @@ const AddSubscription = () => {
 
     return (
         <div style={{ fontFamily: "'Poppins', sans-serif", padding: "2rem", backgroundColor: "#f8fafc", minHeight: "100vh" }}>
-            {/* FORM SECTION */}
             <div style={{ background: "white", borderRadius: "16px", padding: "2.5rem", boxShadow: "0 4px 25px rgba(0,0,0,0.1)", maxWidth: "900px", margin: "0 auto" }}>
                 <h2 style={{ color: "#2d3748", marginBottom: "2rem" }}>
                     {subscription.id ? "✏️ Edit Subscription" : "➕ Add New Subscription"}
@@ -182,7 +181,6 @@ const AddSubscription = () => {
                 </form>
             </div>
 
-            {/* CARDS DISPLAY SECTION */}
             <div style={cardContainerStyle}>
                 {subscriptions.map((s) => (
                     <div key={s.id} style={cardStyle}>
@@ -195,17 +193,13 @@ const AddSubscription = () => {
                             <div>
                                 <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#2d3748" }}>
                                     {(() => {
-                                        // Këtu gjejmë përdoruesin që ka të njëjtën ID me abonimin
                                         const user = users.find(u => String(u.id) === String(s.perdoruesi_id));
-                                        // Nëse e gjen, kthe emrin dhe mbiemrin, përndryshe shfaq ID-në si backup
                                         return user ? `${user.emri} ${user.mbiemri}` : `Përdoruesi #${s.perdoruesi_id}`;
                                     })()}
                                 </h3>
                                 <p style={{ margin: 0, fontSize: "0.85rem", color: "#667eea", fontWeight: "600" }}>
                                     {(() => {
-                                        // Kërkojmë planin që ka ID-në e njëjtë me abonimin
                                         const plan = plans.find(p => String(p.id) === String(s.plani_id));
-                                        // Nëse e gjen, kthe emërtimin, përndryshe lëre "Premium Plan" si backup
                                         return plan ? plan.emertimi : "Premium Plan";
                                     })()}
                                 </p>                            </div>

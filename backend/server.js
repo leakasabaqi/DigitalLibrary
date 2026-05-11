@@ -15,6 +15,28 @@ app.get("/test-db", (req, res) => {
   });
 });
 
+app.get("/api/stats", (req, res) => {
+    const queries = {
+        totalBooks: "SELECT COUNT(*) as count FROM books",
+        totalUsers: "SELECT COUNT(*) as count FROM users",
+        totalSubscriptions: "SELECT COUNT(*) as count FROM subscriptions",
+        latestBook: "SELECT titulli FROM books ORDER BY id DESC LIMIT 1"
+    };
+
+    const results = {};
+    const keys = Object.keys(queries);
+
+    let completed = 0;
+    keys.forEach(key => {
+        db.query(queries[key], (err, data) => {
+            if (err) return res.status(500).json(err);
+            results[key] = data[0];
+            completed++;
+            if (completed === keys.length) res.json(results);
+        });
+    });
+});
+
 app.get("/books", (req, res) => {
   db.query("SELECT * FROM books", (err, result) => {
     if (err) return res.status(500).json(err);
@@ -298,7 +320,6 @@ app.post("/subscriptions", (req, res) => {
 });
 
 app.get("/subscriptions", (req, res) => {
-  // Ky query i bashkon tabelat që të marrësh emrat direkt
   const sql = `
         SELECT s.*, u.emri, u.mbiemri, p.emertimi AS plani_emri 
         FROM subscriptions s
@@ -334,6 +355,353 @@ app.delete("/subscriptions/:id", (req, res) => {
   });
 });
 
+
+app.get("/reading-history", (req, res) => {
+  const sql = `
+    SELECT 
+      rh.*, 
+      u.emri, 
+      u.mbiemri, 
+      b.titulli AS libri_titulli 
+    FROM readinghistory rh
+    JOIN users u ON rh.perdoruesi_id = u.id
+    JOIN books b ON rh.libri_id = b.id
+  `;
+
+  db.query(sql, (err, data) => {
+    if (err) {
+      console.error("GABIM NË GET:", err.sqlMessage);
+      return res.status(500).json(err);
+    }
+    res.json(data);
+  });
+});
+app.post("/reading-history", (req, res) => {
+  const sql = "INSERT INTO readinghistory (`perdoruesi_id`, `libri_id`, `data_fillimit`, `data_fundit`, `faqja_aktuale`, `perqindja_leximit`, `statusi`) VALUES (?)";
+
+  const values = [
+    req.body.perdoruesi_id,
+    req.body.libri_id,
+    req.body.data_fillimit || new Date().toISOString().slice(0, 10),
+    req.body.data_fundit || null,
+    req.body.faqja_aktuale || 0,
+    req.body.perqindja_leximit || 0,
+    req.body.statusi || "duke e lexuar"
+  ];
+
+  db.query(sql, [values], (err, data) => {
+    if (err) {
+      console.error("GABIM NË RUJTJE (POST):", err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+    res.json("Sukses!");
+  });
+});
+
+app.put("/reading-history/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "UPDATE readinghistory SET `perdoruesi_id`=?, `libri_id`=?, `data_fillimit`=?, `data_fundit`=?, `faqja_aktuale`=?, `perqindja_leximit`=?, `statusi`=? WHERE id = ?";
+
+  const values = [
+    req.body.perdoruesi_id,
+    req.body.libri_id,
+    req.body.data_fillimit,
+    req.body.data_fundit,
+    req.body.faqja_aktuale,
+    req.body.perqindja_leximit,
+    req.body.statusi,
+    id
+  ];
+
+  db.query(sql, values, (err, data) => {
+    if (err) {
+      console.error("GABIM NE PUT:", err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+    res.json("U përditësua me sukses!");
+  });
+});
+
+app.delete("/reading-history/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM readinghistory WHERE id = ?", [id], (err, data) => {
+    if (err) {
+      console.error("GABIM NE DELETE:", err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+    res.json("U fshi me sukses!");
+  });
+});
+
+app.get("/reviews", (req, res) => {
+  const sql = `
+        SELECT r.*, u.emri, u.mbiemri, b.titulli 
+        FROM reviews r
+        JOIN users u ON r.perdoruesi_id = u.id
+        JOIN books b ON r.libri_id = b.id
+    `;
+  db.query(sql, (err, data) => {
+    if (err) {
+      console.error("Gabim SQL:", err);
+      return res.status(500).json(err);
+    }
+    res.json(data);
+  });
+});
+
+app.post("/reviews", (req, res) => {
+  const sql = "INSERT INTO reviews (`perdoruesi_id`, `libri_id`, `vleresimi`, `komenti`) VALUES (?)";
+  const values = [req.body.perdoruesi_id, req.body.libri_id, req.body.vleresimi, req.body.komenti];
+  db.query(sql, [values], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json("Vlerësimi u shtua!");
+  });
+});
+
+app.put("/reviews/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "UPDATE reviews SET perdoruesi_id=?, libri_id=?, vleresimi=?, komenti=? WHERE id=?";
+  const values = [req.body.perdoruesi_id, req.body.libri_id, req.body.vleresimi, req.body.komenti, id];
+  db.query(sql, values, (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json("U përditësua!");
+  });
+});
+
+// DELETE - Fshij nga tabela reviews
+app.delete("/reviews/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM reviews WHERE id = ?", [id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json("U fshi!");
+  });
+});
+
+app.get("/wishlists", (req, res) => {
+    const sql = `
+        SELECT w.*, u.emri, u.mbiemri, b.titulli 
+        FROM wishlists w
+        JOIN users u ON w.perdoruesi_id = u.id
+        JOIN books b ON w.libri_id = b.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+
+app.post("/wishlists", (req, res) => {
+    const sql = "INSERT INTO wishlists (`perdoruesi_id`, `libri_id`) VALUES (?)";
+    const values = [req.body.perdoruesi_id, req.body.libri_id];
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Shtuar!");
+    });
+});
+
+app.put("/wishlists/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "UPDATE wishlists SET perdoruesi_id = ?, libri_id = ? WHERE id = ?";
+  db.query(sql, [req.body.perdoruesi_id, req.body.libri_id, id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json("U përditësua!");
+  });
+});
+
+app.delete("/wishlists/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM wishlists WHERE id = ?", [id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json("U fshi!");
+  });
+});
+
+app.get("/collections", (req, res) => {
+    const sql = `
+        SELECT c.*, u.emri, u.mbiemri 
+        FROM collections c
+        JOIN users u ON c.perdoruesi_id = u.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+
+app.post("/collections", (req, res) => {
+    const sql = "INSERT INTO collections (`perdoruesi_id`, `emertimi`, `pershkrimi`, `a_eshte_publike`) VALUES (?)";
+    const values = [
+        req.body.perdoruesi_id,
+        req.body.emertimi,
+        req.body.pershkrimi,
+        req.body.a_eshte_publike
+    ];
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Koleksioni u krijua me sukses!");
+    });
+});
+
+app.put("/collections/:id", (req, res) => {
+    const id = req.params.id;
+    const sql = "UPDATE collections SET perdoruesi_id = ?, emertimi = ?, pershkrimi = ?, a_eshte_publike = ? WHERE id = ?";
+    const values = [req.body.perdoruesi_id, req.body.emertimi, req.body.pershkrimi, req.body.a_eshte_publike, id];
+    db.query(sql, values, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U përditësua!");
+    });
+});
+
+app.delete("/collections/:id", (req, res) => {
+    const id = req.params.id;
+    db.query("DELETE FROM collections WHERE id = ?", [id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U fshi!");
+    });
+});
+
+// GET - Merr lidhjet mes koleksioneve dhe librave
+app.get("/collection-books", (req, res) => {
+    const sql = `
+        SELECT cb.id, c.emertimi as koleksioni, b.titulli as libri, cb.koleksioni_id, cb.libri_id, cb.data_shtimit
+        FROM collectionbooks cb
+        JOIN collections c ON cb.koleksioni_id = c.id
+        JOIN books b ON cb.libri_id = b.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+
+// PUT - Edito lidhjen mes koleksionit dhe librit
+app.get("/collection-books", (req, res) => {
+    const sql = `
+        SELECT 
+            cb.id, 
+            c.emertimi as koleksioni, 
+            u.emri as pronari_emri, 
+            u.mbiemri as pronari_mbiemri,
+            b.titulli as libri, 
+            cb.koleksioni_id, 
+            cb.libri_id, 
+            cb.data_shtimit
+        FROM collectionbooks cb
+        JOIN collections c ON cb.koleksioni_id = c.id
+        JOIN users u ON c.perdoruesi_id = u.id
+        JOIN books b ON cb.libri_id = b.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+app.put("/collection-books/:id", (req, res) => {
+    const id = req.params.id;
+    const sql = "UPDATE collectionbooks SET koleksioni_id = ?, libri_id = ? WHERE id = ?";
+    db.query(sql, [req.body.koleksioni_id, req.body.libri_id, id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U përditësua me sukses!");
+    });
+});
+// POST - Shto libër në koleksion
+app.post("/collection-books", (req, res) => {
+    const sql = "INSERT INTO collectionbooks (`koleksioni_id`, `libri_id`) VALUES (?)";
+    const values = [req.body.koleksioni_id, req.body.libri_id];
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U shtua me sukses!");
+    });
+});
+
+// DELETE - Largo nga koleksioni
+app.delete("/collection-books/:id", (req, res) => {
+    const id = req.params.id;
+    db.query("DELETE FROM collectionbooks WHERE id = ?", [id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U hoq!");
+    });
+});
+
+// GET - Lexo të gjithë shënuesit
+app.get("/bookmarks", (req, res) => {
+    const sql = `
+        SELECT bm.*, u.emri, u.mbiemri, b.titulli 
+        FROM bookmarks bm
+        JOIN users u ON bm.perdoruesi_id = u.id
+        JOIN books b ON bm.libri_id = b.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+
+// POST - Shto shënues të ri
+app.post("/bookmarks", (req, res) => {
+    const sql = "INSERT INTO bookmarks (`perdoruesi_id`, `libri_id`, `faqja`, `shenime`) VALUES (?)";
+    const values = [req.body.perdoruesi_id, req.body.libri_id, req.body.faqja, req.body.shenime];
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Shënuesi u ruajt!");
+    });
+});
+
+app.put("/bookmarks/:id", (req, res) => {
+    const id = req.params.id;
+    const sql = "UPDATE bookmarks SET faqja = ?, shenime = ? WHERE id = ?";
+    db.query(sql, [req.body.faqja, req.body.shenime, id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U përditësua!");
+    });
+});
+
+app.delete("/bookmarks/:id", (req, res) => {
+    db.query("DELETE FROM bookmarks WHERE id = ?", [req.params.id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("U fshi!");
+    });
+});
+
+// GET - Merr të gjitha kërkesat për libra
+app.get("/book-requests", (req, res) => {
+    const sql = `
+        SELECT br.*, u.emri, u.mbiemri 
+        FROM bookrequests br
+        JOIN users u ON br.perdoruesi_id = u.id
+    `;
+    db.query(sql, (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+// POST - Krijo kërkesë të re
+app.post("/book-requests", (req, res) => {
+    const sql = "INSERT INTO bookrequests (`perdoruesi_id`, `titulli_librit`, `autori`, `statusi`) VALUES (?)";
+    const values = [req.body.perdoruesi_id, req.body.titulli_librit, req.body.autori, req.body.statusi || 'Ne Pritje'];
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Kërkesa u dërgua me sukses!");
+    });
+});
+
+// PUT - Përditëso statusin ose të dhënat e kërkesës
+app.put("/book-requests/:id", (req, res) => {
+    const id = req.params.id;
+    const sql = "UPDATE bookrequests SET titulli_librit = ?, autori = ?, statusi = ? WHERE id = ?";
+    db.query(sql, [req.body.titulli_librit, req.body.autori, req.body.statusi, id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Kërkesa u përditësua!");
+    });
+});
+
+// DELETE - Fshij kërkesën
+app.delete("/book-requests/:id", (req, res) => {
+    db.query("DELETE FROM bookrequests WHERE id = ?", [req.params.id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json("Kërkesa u fshi!");
+    });
+});
 
 const authorRoutes = require("./authorRoutes");
 app.use("/", authorRoutes);
