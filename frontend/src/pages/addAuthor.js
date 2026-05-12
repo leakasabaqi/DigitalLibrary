@@ -65,6 +65,7 @@ const AddAuthor = () => {
 
   const handleEdit = (a) => {
     setAuthor({ ...a });
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // E dërgon përdoruesin lart te forma
   };
 
   const handleDelete = async (id) => {
@@ -79,224 +80,146 @@ const AddAuthor = () => {
   };
 
   return (
-    <div style={{ padding: 18 }}>
+    <div style={{ padding: 24, maxWidth: 1200, margin: "0 auto" }}>
+      {/* SECTION: Form e shtimit/editimit */}
       <div className="card">
         <div className="cardHeader">
           <div>
             <div className="cardTitle">
-              {author.id ? "Edit Author" : "Add New Author"}
+              {author.id ? "Edit Author Profile" : "Create New Author"}
             </div>
             <div className="cardSubtitle">
-              Manage your author database with a clean, consistent admin design.
+              Fill in the details below to manage the author's public profile.
             </div>
-          </div>
-          <div className="help">
-            {author.id
-              ? "Editing an existing author"
-              : "Add a new author to the collection"}
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="formGrid">
-          <div className="field">
-            <label className="label">First Name *</label>
-            <input
-              className="input"
-              type="text"
-              name="emri"
-              value={author.emri || ""}
-              placeholder="Enter first name"
-              onChange={handleChange}
-              required
-            />
+        <form onSubmit={handleSubmit} className="formGrid" style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: 24 }}>
+          
+          {/* Image Preview Sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+             <div style={{
+                width: 150,
+                height: 150,
+                borderRadius: 12,
+                backgroundColor: '#f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                border: '2px dashed #cbd5e1'
+             }}>
+                {author.foto_profili ? (
+                    <img src={author.foto_profili} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <span style={{ color: '#94a3b8', fontSize: 12, textAlign: 'center', padding: 10 }}>No Preview Available</span>
+                )}
+             </div>
+             <label className="label">Profile Preview</label>
           </div>
 
-          <div className="field">
-            <label className="label">Last Name *</label>
-            <input
-              className="input"
-              type="text"
-              name="mbiemri"
-              value={author.mbiemri || ""}
-              placeholder="Enter last name"
-              onChange={handleChange}
-              required
-            />
-          </div>
+          {/* Form Fields */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div className="field">
+              <label className="label">First Name *</label>
+              <input className="input" type="text" name="emri" value={author.emri || ""} placeholder="John" onChange={handleChange} required />
+            </div>
 
-          <div className="field">
-            <label className="label">Country</label>
-            <input
-              className="input"
-              type="text"
-              name="vendi"
-              value={author.vendi || ""}
-              placeholder="Enter country"
-              onChange={handleChange}
-            />
-          </div>
+            <div className="field">
+              <label className="label">Last Name *</label>
+              <input className="input" type="text" name="mbiemri" value={author.mbiemri || ""} placeholder="Doe" onChange={handleChange} required />
+            </div>
 
-          <div className="field">
-            <label className="label">Profile Image URL</label>
-            <input
-              className="input"
-              type="text"
-              name="foto_profili"
-              value={author.foto_profili || ""}
-              placeholder="Enter profile image URL"
-              onChange={handleChange}
-            />
-          </div>
+            <div className="field">
+              <label className="label">Country</label>
+              <input className="input" type="text" name="vendi" value={author.vendi || ""} placeholder="e.g. Albania" onChange={handleChange} />
+            </div>
 
-          <div className="field" style={{ gridColumn: "1 / -1" }}>
-            <label className="label">Biography</label>
-            <textarea
-              className="textarea"
-              name="biografia"
-              value={author.biografia || ""}
-              placeholder="Enter author biography"
-              onChange={handleChange}
-            />
-          </div>
+            <div className="field">
+              <label className="label">Profile Image URL</label>
+              <input className="input" type="text" name="foto_profili" value={author.foto_profili || ""} placeholder="https://image-link.com" onChange={handleChange} />
+            </div>
 
-          <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
-            <button type="submit" className="btn btnAccent">
-              {author.id ? "Save Changes" : "Add Author"}
-            </button>
-            {author.id && (
-              <button
-                type="button"
-                className="btn btnGhost"
-                onClick={() =>
-                  setAuthor({
-                    emri: "",
-                    mbiemri: "",
-                    biografia: "",
-                    vendi: "",
-                    foto_profili: "",
-                  })
-                }
-              >
-                Cancel Edit
+            <div className="field" style={{ gridColumn: "1 / -1" }}>
+              <label className="label">Biography</label>
+              <textarea className="textarea" name="biografia" value={author.biografia || ""} placeholder="Write a short bio..." onChange={handleChange} rows="3" />
+            </div>
+
+            <div className="btnRow" style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+              <button type="submit" className="btn btnAccent">
+                {author.id ? "Update Profile" : "Register Author"}
               </button>
-            )}
+              {author.id && (
+                <button type="button" className="btn btnGhost" onClick={() => setAuthor({ emri: "", mbiemri: "", biografia: "", vendi: "", foto_profili: "" })}>
+                  Cancel
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </div>
 
-      <div className="card" style={{ marginTop: 18 }}>
-        <div className="cardHeader">
-          <div>
-            <div className="cardTitle">Authors Collection</div>
-            <div className="cardSubtitle">
-              Browse and manage all authors in the database.
-            </div>
-          </div>
-          <div className="help">{authors.length} authors</div>
+      {/* SECTION: Lista e autorëve */}
+      <div style={{ marginTop: 40 }}>
+        <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1e293b', margin: 0 }}>Active Authors</h2>
+          <span className="help" style={{ background: '#e2e8f0', padding: '4px 12px', borderRadius: 20 }}>{authors.length} Total</span>
         </div>
 
         {authors.length === 0 ? (
-          <div className="cardTight" style={{ textAlign: "center" }}>
-            <div
-              className="cardTitle"
-              style={{ fontSize: 18, marginBottom: 8 }}
-            >
-              No authors yet
-            </div>
-            <div className="help">
-              Start building your author database by adding your first author
-              above.
-            </div>
+          <div className="card" style={{ textAlign: "center", padding: 40 }}>
+            <p className="help">The author database is currently empty.</p>
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-              gap: 18,
-            }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: 20 }}>
             {authors.map((a) => (
-              <div key={a.id} className="card">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    marginBottom: 14,
-                  }}
-                >
-                  {a.foto_profili && (
+              <div key={a.id} className="card" style={{ transition: 'transform 0.2s', cursor: 'default' }}>
+                <div style={{ display: "flex", gap: 16 }}>
+                  {/* Foto rrethore me border të hollë */}
+                  <div style={{ position: 'relative' }}>
                     <img
-                      src={a.foto_profili}
-                      alt="Author profile"
+                      src={a.foto_profili || "https://via.placeholder.com/80"}
+                      alt={a.emri}
                       style={{
-                        width: 60,
-                        height: 60,
+                        width: 80,
+                        height: 80,
                         borderRadius: "50%",
                         objectFit: "cover",
-                        boxShadow: "0 4px 12px rgba(15,23,42,0.1)",
+                        border: '3px solid #f8fafc',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
                       }}
                     />
-                  )}
+                  </div>
+                  
                   <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "#0f172a",
-                        marginBottom: 4,
-                      }}
-                    >
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a" }}>
                       {a.emri} {a.mbiemri}
                     </div>
-                    {a.vendi && (
-                      <div className="help" style={{ color: "#475569" }}>
-                        {a.vendi}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {a.biografia && (
-                  <p
-                    style={{
-                      fontSize: 14,
+                    <div style={{ fontSize: 13, color: "#64748b", marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+                       <span>📍 {a.vendi || "Unknown Location"}</span>
+                    </div>
+                    <p style={{
+                      fontSize: 13,
                       color: "#475569",
-                      lineHeight: 1.6,
-                      marginBottom: 14,
+                      lineHeight: 1.5,
+                      margin: '0 0 16px 0',
                       display: "-webkit-box",
-                      WebkitLineClamp: 3,
+                      WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
                       overflow: "hidden",
-                    }}
-                  >
-                    {a.biografia}
-                  </p>
-                )}
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 10,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <button
-                    type="button"
-                    className="btn btnPrimary"
-                    onClick={() => handleEdit(a)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btnDanger"
-                    onClick={() => handleDelete(a.id)}
-                  >
-                    Delete
-                  </button>
+                    }}>
+                      {a.biografia || "No biography provided."}
+                    </p>
+                    
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button type="button" className="btn btnPrimary" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => handleEdit(a)}>
+                        Edit
+                      </button>
+                      <button type="button" className="btn btnDanger" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => handleDelete(a.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
