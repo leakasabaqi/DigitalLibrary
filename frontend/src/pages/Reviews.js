@@ -2,167 +2,342 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Reviews = () => {
-    const [reviews, setReviews] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [books, setBooks] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [record, setRecord] = useState({
-        perdoruesi_id: "",
-        libri_id: "",
-        vleresimi: 5,
-        komenti: ""
+  const [reviews, setReviews] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [record, setRecord] = useState({
+    perdoruesi_id: "",
+    libri_id: "",
+    vleresimi: 5,
+    komenti: "",
+  });
+
+  const fetchData = async () => {
+    try {
+      const [resR, resU, resB] = await Promise.all([
+        axios.get("http://localhost:5000/reviews"),
+        axios.get("http://localhost:5000/users"),
+        axios.get("http://localhost:5000/books"),
+      ]);
+      setReviews(resR.data || []);
+      setUsers(resU.data || []);
+      setBooks(resB.data || []);
+    } catch (err) {
+      console.error("Gabim në ngarkim:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRecord((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRating = (value) => {
+    setRecord((prev) => ({ ...prev, vleresimi: value }));
+  };
+
+  const handleEdit = (review) => {
+    setRecord({
+      perdoruesi_id: review.perdoruesi_id,
+      libri_id: review.libri_id,
+      vleresimi: review.vleresimi,
+      komenti: review.komenti || "",
+      id: review.id,
     });
+    setIsEditing(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-    const fetchData = async () => {
-        try {
-            const [resR, resU, resB] = await Promise.all([
-                axios.get("http://localhost:5000/reviews"),
-                axios.get("http://localhost:5000/users"),
-                axios.get("http://localhost:5000/books")
-            ]);
-            setReviews(resR.data || []);
-            setUsers(resU.data || []);
-            setBooks(resB.data || []);
-        } catch (err) { console.error("Gabim në ngarkim:", err); }
-    };
+  const resetForm = () => {
+    setRecord({ perdoruesi_id: "", libri_id: "", vleresimi: 5, komenti: "" });
+    setIsEditing(false);
+  };
 
-    useEffect(() => { fetchData(); }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!record.perdoruesi_id || !record.libri_id) {
+      return alert("Ju lutem zgjidhni Përdoruesin dhe Librin!");
+    }
 
-    // Funksioni universal për ndryshimin e inputeve (Zgjidh problemin e selektimit)
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setRecord({ ...record, [name]: value });
-    };
+    try {
+      if (isEditing) {
+        await axios.put(`http://localhost:5000/reviews/${record.id}`, record);
+      } else {
+        await axios.post("http://localhost:5000/reviews", record);
+      }
+      resetForm();
+      fetchData();
+    } catch (err) {
+      alert("Gabim gjatë ruajtjes!");
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!record.perdoruesi_id || !record.libri_id) return alert("Ju lutem zgjidhni Përdoruesin dhe Librin!");
-        
-        try {
-            if (isEditing) {
-                await axios.put(`http://localhost:5000/reviews/${record.id}`, record);
-            } else {
-                await axios.post("http://localhost:5000/reviews", record);
-            }
-            resetForm();
-            fetchData();
-        } catch (err) { alert("Gabim gjatë ruajtjes!"); }
-    };
+  const inputStyle = {
+    width: "100%",
+    padding: "0.875rem 1rem",
+    border: "2px solid #e2e8f0",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontFamily: "'Poppins', sans-serif",
+    transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+    outline: "none",
+  };
 
-    const resetForm = () => {
-        setRecord({ perdoruesi_id: "", libri_id: "", vleresimi: 5, komenti: "" });
-        setIsEditing(false);
-    };
+  const handleFocus = (e) => {
+    e.target.style.borderColor = "#667eea";
+    e.target.style.boxShadow = "0 0 0 3px rgba(102, 126, 234, 0.1)";
+  };
 
-    // STILE
-    const inputStyle = { width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ccc", marginTop: "5px", fontSize: "15px", backgroundColor: "#fff" };
-    const starBtnStyle = (num) => ({
-        fontSize: "25px",
-        cursor: "pointer",
-        color: num <= record.vleresimi ? "#ffc107" : "#e4e5e9",
-        background: "none",
-        border: "none",
-        padding: "0 2px"
-    });
+  const handleBlur = (e) => {
+    e.target.style.borderColor = "#e2e8f0";
+    e.target.style.boxShadow = "none";
+  };
 
-    return (
-        <div style={{ padding: "30px", maxWidth: "1100px", margin: "0 auto", fontFamily: "'Segoe UI', sans-serif" }}>
-            <div style={{ background: "#fff", padding: "30px", borderRadius: "15px", boxShadow: "0 5px 25px rgba(0,0,0,0.1)", marginBottom: "40px" }}>
-                <h2 style={{ marginTop: 0 }}>{isEditing ? "✏️ Edito Review" : "⭐ Shto një Review"}</h2>
-                <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                    
-                    {/* SELEKTIMI I PËRDORUESIT */}
-                    <div>
-                        <label style={{ fontWeight: "600" }}>Zgjidh Përdoruesin:</label>
-                        <select 
-                            name="perdoruesi_id" 
-                            value={record.perdoruesi_id} 
-                            onChange={handleChange} 
-                            required 
-                            style={inputStyle}
-                        >
-                            <option value="">-- Kliko për të zgjedhur --</option>
-                            {users.map(u => <option key={u.id} value={u.id}>{u.emri} {u.mbiemri}</option>)}
-                        </select>
-                    </div>
+  const ratingButton = (value) => ({
+    fontSize: "24px",
+    cursor: "pointer",
+    color: value <= record.vleresimi ? "#facc15" : "#cbd5e1",
+    background: "none",
+    border: "none",
+    padding: "0 6px",
+  });
 
-                    {/* SELEKTIMI I LIBRIT */}
-                    <div>
-                        <label style={{ fontWeight: "600" }}>Zgjidh Librin:</label>
-                        <select 
-                            name="libri_id" 
-                            value={record.libri_id} 
-                            onChange={handleChange} 
-                            required 
-                            style={inputStyle}
-                        >
-                            <option value="">-- Kliko për të zgjedhur --</option>
-                            {books.map(b => <option key={b.id} value={b.id}>{b.titulli}</option>)}
-                        </select>
-                    </div>
-
-                    {/* SELEKTIMI I YJEVE (Visual) */}
-                    <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "10px", background: "#f9f9f9", borderRadius: "10px" }}>
-                        <label style={{ display: "block", marginBottom: "10px", fontWeight: "600" }}>Vlerësimi me yje:</label>
-                        {[1, 2, 3, 4, 5].map(num => (
-                            <button 
-                                key={num} 
-                                type="button" 
-                                onClick={() => setRecord({ ...record, vleresimi: num })}
-                                style={starBtnStyle(num)}
-                            >
-                                ★
-                            </button>
-                        ))}
-                        <span style={{ marginLeft: "10px", fontWeight: "bold" }}>({record.vleresimi}/5)</span>
-                    </div>
-
-                    <div style={{ gridColumn: "1 / -1" }}>
-                        <label style={{ fontWeight: "600" }}>Komenti juaj:</label>
-                        <textarea 
-                            name="komenti" 
-                            value={record.komenti} 
-                            onChange={handleChange} 
-                            placeholder="Shkruani diçka për librin..." 
-                            style={{ ...inputStyle, height: "100px", resize: "none" }} 
-                        />
-                    </div>
-
-                    <div style={{ gridColumn: "1 / -1", display: "flex", gap: "10px" }}>
-                        <button type="submit" style={{ flex: 2, padding: "15px", background: "#28a745", color: "white", border: "none", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>
-                            {isEditing ? "PËRDITËSO" : "RUAJ REVIEW"}
-                        </button>
-                        {isEditing && <button type="button" onClick={resetForm} style={{ flex: 1, background: "#6c757d", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>Anulo</button>}
-                    </div>
-                </form>
+  return (
+    <div style={{ padding: 18 }}>
+      <div className="card">
+        <div className="cardHeader">
+          <div>
+            <div className="cardTitle">
+              {isEditing ? "Edit Review" : "Add New Review"}
             </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "25px" }}>
-                {reviews.map(r => (
-                    <div key={r.id} style={{ background: "white", padding: "20px", borderRadius: "12px", boxShadow: "0 3px 15px rgba(0,0,0,0.05)", position: "relative", borderTop: "6px solid #ffc107" }}>
-                        <div style={{ position: "absolute", top: "15px", right: "15px", display: "flex", gap: "10px" }}>
-                            <button onClick={() => { setRecord(r); setIsEditing(true); window.scrollTo({top: 0, behavior: 'smooth'}); }} style={{ border: "none", background: "none", cursor: "pointer", fontSize: "18px" }}>✏️</button>
-                            <button onClick={async () => { if(window.confirm("Fshije?")) { await axios.delete(`http://localhost:5000/reviews/${r.id}`); fetchData(); } }} style={{ border: "none", background: "none", cursor: "pointer", fontSize: "18px" }}>🗑️</button>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                            <small style={{ color: "#777", textTransform: "uppercase", fontWeight: "bold", fontSize: "11px" }}>Përdoruesi</small>
-                            <div style={{ fontWeight: "600" }}>{r.emri} {r.mbiemri}</div>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                            <small style={{ color: "#777", textTransform: "uppercase", fontWeight: "bold", fontSize: "11px" }}>Libri</small>
-                            <div style={{ fontWeight: "600", color: "#007bff" }}>{r.titulli}</div>
-                        </div>
-                        <div style={{ color: "#ffc107", fontSize: "20px", margin: "10px 0" }}>
-                            {"★".repeat(r.vleresimi)}{"☆".repeat(5 - r.vleresimi)}
-                        </div>
-                        <p style={{ fontSize: "14px", color: "#555", fontStyle: "italic", background: "#f9f9f9", padding: "10px", borderRadius: "8px" }}>
-                            "{r.komenti || "Nuk ka koment."}"
-                        </p>
-                    </div>
-                ))}
+            <div className="cardSubtitle">
+              Add, edit, and manage book reviews with a polished admin design.
             </div>
+          </div>
+          <div className="help">
+            {isEditing
+              ? "Updating an existing review"
+              : "Create a new book review"}
+          </div>
         </div>
-    );
+
+        <form onSubmit={handleSubmit} className="formGrid">
+          <div className="field">
+            <label className="label">User *</label>
+            <select
+              className="select"
+              name="perdoruesi_id"
+              value={record.perdoruesi_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Select User --</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.emri} {u.mbiemri}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label className="label">Book *</label>
+            <select
+              className="select"
+              name="libri_id"
+              value={record.libri_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Select Book --</option>
+              {books.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.titulli}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Rating</label>
+            <div
+              style={{
+                padding: 14,
+                borderRadius: 14,
+                background: "#f8fafc",
+                border: "1px solid rgba(15,23,42,0.08)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => handleRating(value)}
+                    style={ratingButton(value)}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span style={{ fontWeight: 700, color: "#0f172a" }}>
+                  {record.vleresimi}/5
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Comment</label>
+            <textarea
+              className="textarea"
+              name="komenti"
+              value={record.komenti}
+              onChange={handleChange}
+              rows={5}
+              placeholder="Write the review comment here..."
+            />
+          </div>
+
+          <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
+            <button type="submit" className="btn btnAccent">
+              {isEditing ? "Save Review" : "Add Review"}
+            </button>
+            {isEditing && (
+              <button
+                type="button"
+                className="btn btnGhost"
+                onClick={resetForm}
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <div className="card" style={{ marginTop: 18 }}>
+        <div className="cardHeader">
+          <div>
+            <div className="cardTitle">Reviews</div>
+            <div className="cardSubtitle">
+              Browse all book reviews and manage published feedback.
+            </div>
+          </div>
+          <div className="help">{reviews.length} reviews</div>
+        </div>
+
+        {reviews.length === 0 ? (
+          <div className="cardTight" style={{ textAlign: "center" }}>
+            <div
+              className="cardTitle"
+              style={{ fontSize: 18, marginBottom: 8 }}
+            >
+              No reviews available yet
+            </div>
+            <div className="help">
+              Add a review above to populate this list.
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gap: 18,
+            }}
+          >
+            {reviews.map((r) => (
+              <div key={r.id} className="card">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    alignItems: "flex-start",
+                    flexWrap: "wrap",
+                    marginBottom: 14,
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "#0f172a",
+                        marginBottom: 6,
+                      }}
+                    >
+                      {r.titulli}
+                    </div>
+                    <div className="help">
+                      {r.emri} {r.mbiemri}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      className="btn btnGhost"
+                      onClick={() => handleEdit(r)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btnDanger"
+                      onClick={async () => {
+                        if (window.confirm("Delete this review?")) {
+                          await axios.delete(
+                            `http://localhost:5000/reviews/${r.id}`,
+                          );
+                          fetchData();
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    marginBottom: 14,
+                  }}
+                >
+                  <span className="badge badgeAccent">
+                    Rating: {r.vleresimi}/5
+                  </span>
+                  <span className="help" style={{ color: "#475569" }}>
+                    {r.komenti
+                      ? `${r.komenti.substring(0, 40)}${r.komenti.length > 40 ? "..." : ""}`
+                      : "No comment available."}
+                  </span>
+                </div>
+
+                <p
+                  style={{
+                    color: "#475569",
+                    lineHeight: 1.7,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {r.komenti || "No comment available."}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Reviews;

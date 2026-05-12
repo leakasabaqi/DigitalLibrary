@@ -527,458 +527,138 @@ const AddBook = () => {
   };
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif" }}>
-      {/* Header */}
-      <div
-        style={{
-          marginBottom: "2rem",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontWeight: "700",
-            color: "#2d3748",
-            marginBottom: "0.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-          }}
-        >
-          📚 Book Management
-        </h1>
-        <p
-          style={{
-            fontSize: "1.1rem",
-            color: "#718096",
-            fontWeight: "400",
-          }}
-        >
-          {book.id
-            ? "Edit existing book"
-            : "Add new books to your library collection"}
-        </p>
-      </div>
-
-      {/* Form Card */}
-      <div
-        style={{
-          background: "white",
-          borderRadius: "16px",
-          padding: "2.5rem",
-          marginBottom: "3rem",
-          boxShadow: "0 4px 25px rgba(0,0,0,0.1)",
-          border: "1px solid rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: "600",
-            color: "#2d3748",
-            marginBottom: "2rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          {book.id ? "✏️ Edit Book" : "➕ Add New Book"}
-        </h2>
-
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "1.5rem",
-          }}
-        >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Book Title *
-              </label>
-              <input
-                name="titulli"
-                value={book.titulli || ""}
-                placeholder="Enter book title"
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
+    <div style={{ padding: 18 }}>
+      <div className="card">
+        <div className="cardHeader">
+          <div>
+            <div className="cardTitle">
+              {book.id ? "Edit Book" : "Add New Book"}
             </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Author *
-              </label>
-              <select
-                name="autori_id"
-                value={book.autori_id || ""}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  backgroundColor: "white",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              >
-                <option value="">Select an author</option>
-                {authors.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.emri} {a.mbiemri}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Category *
-              </label>
-              <select
-                name="kategoria_id"
-                value={book.kategoria_id || ""}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  backgroundColor: "white",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              >
-                <option value="">Select a category</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.emertimi || c.emri_kategorise}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                ISBN
-              </label>
-              <input
-                name="isbn"
-                value={book.isbn || ""}
-                placeholder="Enter ISBN"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
+            <div className="cardSubtitle">
+              Manage your library catalog with a clean, consistent admin design.
             </div>
           </div>
+          <div className="help">
+            {book.id
+              ? "Editing an existing book"
+              : "Add a new book to the collection"}
+          </div>
+        </div>
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Publication Year
-              </label>
-              <input
-                name="viti_botimit"
-                type="number"
-                value={book.viti_botimit || ""}
-                placeholder="Enter publication year"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Language
-              </label>
-              <input
-                name="gjuha"
-                value={book.gjuha || ""}
-                placeholder="Enter language"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Number of Pages
-              </label>
-              <input
-                name="numri_faqeve"
-                type="number"
-                value={book.numri_faqeve || ""}
-                placeholder="Enter number of pages"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Cover Image URL
-              </label>
-              <input
-                name="foto_kopertines"
-                value={book.foto_kopertines || ""}
-                placeholder="Enter cover image URL"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="formGrid">
+          <div className="field">
+            <label className="label">Book Title *</label>
+            <input
+              className="input"
+              name="titulli"
+              value={book.titulli || ""}
+              placeholder="Enter book title"
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          {/* Action Buttons */}
-          <div
-            style={{
-              gridColumn: "1 / -1",
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "center",
-              marginTop: "1rem",
-            }}
-          >
-            <button
-              type="submit"
-              style={{
-                padding: "1rem 2rem",
-                background: book.id
-                  ? "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                border: "none",
-                borderRadius: "50px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                fontFamily: "'Poppins', sans-serif",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: "0 4px 15px rgba(102, 126, 234, 0.4)",
-                minWidth: "160px",
-              }}
-              onMouseOver={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow =
-                  "0 6px 20px rgba(102, 126, 234, 0.6)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow =
-                  "0 4px 15px rgba(102, 126, 234, 0.4)";
-              }}
+          <div className="field">
+            <label className="label">Author *</label>
+            <select
+              className="select"
+              name="autori_id"
+              value={book.autori_id || ""}
+              onChange={handleChange}
+              required
             >
-              {book.id ? "💾 Save Changes" : "📚 Add Book"}
-            </button>
+              <option value="">Select an author</option>
+              {authors.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.emri} {a.mbiemri}
+                </option>
+              ))}
+            </select>
+          </div>
 
+          <div className="field">
+            <label className="label">Category *</label>
+            <select
+              className="select"
+              name="kategoria_id"
+              value={book.kategoria_id || ""}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select a category</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.emertimi || c.emri_kategorise}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label className="label">ISBN</label>
+            <input
+              className="input"
+              name="isbn"
+              value={book.isbn || ""}
+              placeholder="Enter ISBN"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field">
+            <label className="label">Publication Year</label>
+            <input
+              className="input"
+              name="viti_botimit"
+              type="number"
+              value={book.viti_botimit || ""}
+              placeholder="Enter publication year"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field">
+            <label className="label">Language</label>
+            <input
+              className="input"
+              name="gjuha"
+              value={book.gjuha || ""}
+              placeholder="Enter language"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field">
+            <label className="label">Number of Pages</label>
+            <input
+              className="input"
+              name="numri_faqeve"
+              type="number"
+              value={book.numri_faqeve || ""}
+              placeholder="Enter number of pages"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Cover Image URL</label>
+            <input
+              className="input"
+              name="foto_kopertines"
+              value={book.foto_kopertines || ""}
+              placeholder="Enter cover image URL"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
+            <button type="submit" className="btn btnAccent">
+              {book.id ? "Save Changes" : "Add Book"}
+            </button>
             {book.id && (
               <button
                 type="button"
+                className="btn btnGhost"
                 onClick={() =>
                   setBook({
                     titulli: "",
@@ -991,166 +671,83 @@ const AddBook = () => {
                     foto_kopertines: "",
                   })
                 }
-                style={{
-                  padding: "1rem 2rem",
-                  background: "transparent",
-                  color: "#718096",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "50px",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  fontFamily: "'Poppins', sans-serif",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  minWidth: "160px",
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.color = "#667eea";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.color = "#718096";
-                }}
               >
-                ❌ Cancel Edit
+                Cancel Edit
               </button>
             )}
           </div>
         </form>
       </div>
 
-      {/* Books List Card */}
-      <div
-        style={{
-          background: "white",
-          borderRadius: "16px",
-          padding: "2.5rem",
-          boxShadow: "0 4px 25px rgba(0,0,0,0.1)",
-          border: "1px solid rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: "600",
-            color: "#2d3748",
-            marginBottom: "2rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          📖 Library Collection
-        </h2>
+      <div className="card" style={{ marginTop: 18 }}>
+        <div className="cardHeader">
+          <div>
+            <div className="cardTitle">Library Collection</div>
+            <div className="cardSubtitle">
+              Browse and manage all books in the library.
+            </div>
+          </div>
+          <div className="help">{books.length} books</div>
+        </div>
 
         {books.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "3rem",
-              color: "#718096",
-              background: "#f8f9fa",
-              borderRadius: "12px",
-              border: "2px dashed #e2e8f0",
-            }}
-          >
-            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📚</div>
-            <h3
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                marginBottom: "0.5rem",
-                color: "#4a5568",
-              }}
+          <div className="cardTight" style={{ textAlign: "center" }}>
+            <div
+              className="cardTitle"
+              style={{ fontSize: 18, marginBottom: 8 }}
             >
               No books yet
-            </h3>
-            <p style={{ fontSize: "1rem" }}>
+            </div>
+            <div className="help">
               Start building your library by adding your first book above.
-            </p>
+            </div>
           </div>
         ) : (
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-              gap: "1.5rem",
+              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gap: 18,
             }}
           >
             {books.map((b) => (
-              <div
-                key={b.id}
-                style={{
-                  background: "#f8f9fa",
-                  borderRadius: "12px",
-                  padding: "1.5rem",
-                  border: "1px solid #e2e8f0",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.transform = "translateY(-4px)";
-                  e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
-                  e.target.style.borderColor = "#667eea";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
-                  e.target.style.borderColor = "#e2e8f0";
-                }}
-              >
+              <div key={b.id} className="card" style={{ position: "relative" }}>
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "flex-start",
-                    marginBottom: "1rem",
+                    gap: 12,
+                    marginBottom: 16,
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <h3
+                  <div>
+                    <div
                       style={{
-                        fontSize: "1.1rem",
-                        fontWeight: "600",
-                        color: "#2d3748",
-                        marginBottom: "0.5rem",
-                        lineHeight: "1.4",
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "#0f172a",
+                        marginBottom: 6,
                       }}
                     >
                       {b.titulli}
-                    </h3>
-                    <div
-                      style={{
-                        fontSize: "0.875rem",
-                        color: "#718096",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
+                    </div>
+                    <div className="help">
                       Author: {b.emri} {b.mbiemri}
                     </div>
-                    {b.isbn && (
-                      <div
-                        style={{
-                          fontSize: "0.875rem",
-                          color: "#718096",
-                        }}
-                      >
-                        ISBN: {b.isbn}
-                      </div>
-                    )}
+                    {b.isbn && <div className="help">ISBN: {b.isbn}</div>}
                   </div>
+
                   {b.foto_kopertines && (
                     <img
                       src={b.foto_kopertines}
                       alt="Book cover"
                       style={{
-                        width: "60px",
-                        height: "80px",
+                        width: 72,
+                        height: 96,
                         objectFit: "cover",
-                        borderRadius: "6px",
-                        marginLeft: "1rem",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                        borderRadius: 12,
+                        boxShadow: "0 4px 18px rgba(15,23,42,0.08)",
                       }}
                     />
                   )}
@@ -1159,69 +756,24 @@ const AddBook = () => {
                 <div
                   style={{
                     display: "flex",
-                    gap: "0.5rem",
                     justifyContent: "flex-end",
+                    gap: 10,
+                    flexWrap: "wrap",
                   }}
                 >
                   <button
+                    type="button"
+                    className="btn btnPrimary"
                     onClick={() => handleEdit(b)}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      background:
-                        "linear-gradient(135deg, #48bb78 0%, #38a169 100%)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "20px",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      fontFamily: "'Poppins', sans-serif",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.transform = "translateY(-1px)";
-                      e.target.style.boxShadow =
-                        "0 4px 12px rgba(72, 187, 120, 0.4)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "none";
-                    }}
                   >
-                    ✏️ Edit
+                    Edit
                   </button>
                   <button
+                    type="button"
+                    className="btn btnDanger"
                     onClick={() => handleDelete(b.id)}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      background:
-                        "linear-gradient(135deg, #f56565 0%, #e53e3e 100%)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "20px",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      fontFamily: "'Poppins', sans-serif",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.transform = "translateY(-1px)";
-                      e.target.style.boxShadow =
-                        "0 4px 12px rgba(245, 101, 101, 0.4)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "none";
-                    }}
                   >
-                    🗑️ Delete
+                    Delete
                   </button>
                 </div>
               </div>

@@ -105,7 +105,7 @@ const AddPlan = () => {
             gap: "0.5rem",
           }}
         >
-          💎 Subscription Plans
+          Subscription Plans
         </h1>
         <p
           style={{
@@ -142,7 +142,7 @@ const AddPlan = () => {
             gap: "0.5rem",
           }}
         >
-          {plan.id ? "✏️ Edit Plan" : "➕ Create New Plan"}
+          {plan.id ? "Edit Plan" : "Create New Plan"}
         </h2>
 
         <form
@@ -316,128 +316,48 @@ const AddPlan = () => {
                   e.target.style.boxShadow = "none";
                 }}
               >
-                <option value="aktiv">🟢 Active</option>
-                <option value="jo-aktiv">🔴 Inactive</option>
+                <option value="aktiv">Active</option>
+                <option value="jo-aktiv">Inactive</option>
               </select>
             </div>
           </div>
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Plan Description
-              </label>
-              <textarea
-                name="pershkrimi"
-                value={plan.pershkrimi || ""}
-                placeholder="Describe the plan features and benefits"
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  minHeight: "120px",
-                  resize: "vertical",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
-
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  cursor: "pointer",
-                }}
-              >
-                <input
-                  name="a_ka_shkarkim"
-                  type="checkbox"
-                  checked={
-                    plan.a_ka_shkarkim === 1 || plan.a_ka_shkarkim === "1"
-                  }
-                  onChange={handleChange}
-                  style={{
-                    width: "18px",
-                    height: "18px",
-                    accentColor: "#667eea",
-                  }}
-                />
-                📥 Allow book downloads
-              </label>
-            </div>
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Plan Description</label>
+            <textarea
+              name="pershkrimi"
+              value={plan.pershkrimi || ""}
+              placeholder="Describe the plan features and benefits"
+              onChange={handleChange}
+              className="textarea"
+            />
           </div>
 
-          {/* Action Buttons */}
-          <div
-            style={{
-              gridColumn: "1 / -1",
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "center",
-              marginTop: "1rem",
-            }}
-          >
-            <button
-              type="submit"
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label
               style={{
-                padding: "1rem 2rem",
-                background: plan.id
-                  ? "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                border: "none",
-                borderRadius: "50px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                fontFamily: "'Poppins', sans-serif",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
                 cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: "0 4px 15px rgba(102, 126, 234, 0.4)",
-                minWidth: "160px",
-              }}
-              onMouseOver={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow =
-                  "0 6px 20px rgba(102, 126, 234, 0.6)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow =
-                  "0 4px 15px rgba(102, 126, 234, 0.4)";
+                fontWeight: 500,
               }}
             >
-              {plan.id ? "💾 Save Changes" : "💎 Create Plan"}
-            </button>
+              <input
+                name="a_ka_shkarkim"
+                type="checkbox"
+                checked={plan.a_ka_shkarkim === 1 || plan.a_ka_shkarkim === "1"}
+                onChange={handleChange}
+                style={{ accentColor: "#2563eb", width: 18, height: 18 }}
+              />
+              Allow book downloads
+            </label>
+          </div>
 
+          <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
+            <button type="submit" className="btn btnAccent">
+              {plan.id ? "Save Changes" : "Create Plan"}
+            </button>
             {plan.id && (
               <button
                 type="button"
@@ -451,319 +371,160 @@ const AddPlan = () => {
                     statusi: "aktiv",
                   })
                 }
-                style={{
-                  padding: "1rem 2rem",
-                  background: "transparent",
-                  color: "#718096",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "50px",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  fontFamily: "'Poppins', sans-serif",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  minWidth: "160px",
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.color = "#667eea";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.color = "#718096";
-                }}
+                className="btn btnGhost"
               >
-                ❌ Cancel Edit
+                Cancel
               </button>
             )}
           </div>
         </form>
       </div>
 
-      {/* Plans List Card */}
-      <div
-        style={{
-          background: "white",
-          borderRadius: "16px",
-          padding: "2.5rem",
-          boxShadow: "0 4px 25px rgba(0,0,0,0.1)",
-          border: "1px solid rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: "600",
-            color: "#2d3748",
-            marginBottom: "2rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          📋 Subscription Plans
-        </h2>
-
+      <div className="card" style={{ marginTop: 18 }}>
+        <div className="cardHeader">
+          <div>
+            <div className="cardTitle">Subscription Plans</div>
+            <div className="cardSubtitle">View and manage all plans</div>
+          </div>
+        </div>
         {plans.length === 0 ? (
           <div
-            style={{
-              textAlign: "center",
-              padding: "3rem",
-              color: "#718096",
-              background: "#f8f9fa",
-              borderRadius: "12px",
-              border: "2px dashed #e2e8f0",
-            }}
+            style={{ textAlign: "center", padding: "2rem", color: "#718096" }}
           >
-            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📋</div>
-            <h3
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                marginBottom: "0.5rem",
-                color: "#4a5568",
-              }}
-            >
-              No plans yet
-            </h3>
-            <p style={{ fontSize: "1rem" }}>
-              Create your first subscription plan to start offering library
-              services.
-            </p>
+            No plans yet. Create your first plan above.
           </div>
         ) : (
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-              gap: "1.5rem",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 12,
             }}
           >
             {plans.map((p) => (
               <div
                 key={p.id}
                 style={{
-                  background: "#f8f9fa",
-                  borderRadius: "12px",
-                  padding: "1.5rem",
+                  padding: 12,
                   border: "1px solid #e2e8f0",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
+                  borderRadius: 10,
                   position: "relative",
                 }}
-                onMouseOver={(e) => {
-                  e.target.style.transform = "translateY(-4px)";
-                  e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
-                  e.target.style.borderColor = "#667eea";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
-                  e.target.style.borderColor = "#e2e8f0";
-                }}
               >
-                {/* Status Badge */}
                 <div
                   style={{
                     position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "20px",
-                    fontSize: "0.75rem",
-                    fontWeight: "600",
+                    top: 8,
+                    right: 8,
+                    padding: "2px 8px",
+                    borderRadius: 12,
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
                     textTransform: "uppercase",
-                    background:
-                      p.statusi === "aktiv"
-                        ? "linear-gradient(135deg, #48bb78 0%, #38a169 100%)"
-                        : "linear-gradient(135deg, #f56565 0%, #e53e3e 100%)",
-                    color: "white",
+                    background: p.statusi === "aktiv" ? "#dcfce7" : "#fee2e2",
+                    color: p.statusi === "aktiv" ? "#15803d" : "#991b1b",
                   }}
                 >
-                  {p.statusi === "aktiv" ? "🟢 Active" : "🔴 Inactive"}
+                  {p.statusi === "aktiv" ? "Active" : "Inactive"}
                 </div>
-
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "1rem",
+                    gap: 10,
+                    marginBottom: 10,
+                    marginTop: 5,
                   }}
                 >
                   <div
                     style={{
-                      width: "50px",
-                      height: "50px",
+                      width: 40,
+                      height: 40,
                       borderRadius: "50%",
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      background: "#2563eb",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       color: "white",
-                      fontSize: "1.25rem",
-                      fontWeight: "600",
-                      marginRight: "1rem",
+                      fontSize: "0.9rem",
+                      fontWeight: 600,
+                      flexShrink: 0,
                     }}
                   >
-                    💎
+                    €
                   </div>
-                  <div>
-                    <h3
+                  <div style={{ flex: 1 }}>
+                    <div
                       style={{
-                        fontSize: "1.1rem",
-                        fontWeight: "600",
-                        color: "#2d3748",
-                        marginBottom: "0.25rem",
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: "#111827",
                       }}
                     >
                       {p.emertimi}
-                    </h3>
-                    <p
+                    </div>
+                    <div
                       style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "700",
-                        color: "#667eea",
-                        margin: "0",
+                        fontSize: "0.85rem",
+                        color: "#2563eb",
+                        fontWeight: 600,
                       }}
                     >
                       €{p.cmimi_mujor}/month
-                    </p>
+                    </div>
                   </div>
                 </div>
-
                 <div
                   style={{
-                    marginBottom: "1rem",
+                    fontSize: "0.85rem",
+                    color: "#4a5568",
+                    marginBottom: 8,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    <span style={{ fontSize: "1rem" }}>📚</span>
-                    <span
-                      style={{
-                        fontSize: "0.875rem",
-                        color: "#4a5568",
-                      }}
-                    >
-                      Up to {p.librat_max_mujor} books per month
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    <span style={{ fontSize: "1rem" }}>
-                      {p.a_ka_shkarkim === 1 || p.a_ka_shkarkim === "1"
-                        ? "📥"
-                        : "👁️"}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.875rem",
-                        color: "#4a5568",
-                      }}
-                    >
-                      {p.a_ka_shkarkim === 1 || p.a_ka_shkarkim === "1"
-                        ? "Download enabled"
-                        : "Read-only access"}
-                    </span>
+                  <div>Up to {p.librat_max_mujor} books/month</div>
+                  <div>
+                    {p.a_ka_shkarkim === 1 || p.a_ka_shkarkim === "1"
+                      ? "✓ Download"
+                      : "• Read-only"}
                   </div>
                 </div>
-
                 {p.pershkrimi && (
-                  <p
+                  <div
                     style={{
-                      fontSize: "0.875rem",
+                      fontSize: "0.8rem",
                       color: "#4a5568",
-                      lineHeight: "1.5",
-                      marginBottom: "1rem",
+                      marginBottom: 10,
                       display: "-webkit-box",
-                      WebkitLineClamp: "3",
+                      WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
                       overflow: "hidden",
                     }}
                   >
                     {p.pershkrimi}
-                  </p>
+                  </div>
                 )}
-
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    justifyContent: "flex-end",
-                  }}
-                >
+                <div style={{ display: "flex", gap: 6 }}>
                   <button
                     onClick={() => handleEdit(p)}
+                    className="btn btnPrimary"
                     style={{
-                      padding: "0.5rem 1rem",
-                      background:
-                        "linear-gradient(135deg, #48bb78 0%, #38a169 100%)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "20px",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      fontFamily: "'Poppins', sans-serif",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.transform = "translateY(-1px)";
-                      e.target.style.boxShadow =
-                        "0 4px 12px rgba(72, 187, 120, 0.4)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "none";
+                      flex: 1,
+                      fontSize: "0.85rem",
+                      padding: "6px 10px",
                     }}
                   >
-                    ✏️ Edit
+                    Edit
                   </button>
                   <button
                     onClick={() => handleDelete(p.id)}
+                    className="btn btnDanger"
                     style={{
-                      padding: "0.5rem 1rem",
-                      background:
-                        "linear-gradient(135deg, #f56565 0%, #e53e3e 100%)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "20px",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      fontFamily: "'Poppins', sans-serif",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.transform = "translateY(-1px)";
-                      e.target.style.boxShadow =
-                        "0 4px 12px rgba(245, 101, 101, 0.4)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "none";
+                      flex: 1,
+                      fontSize: "0.85rem",
+                      padding: "6px 10px",
                     }}
                   >
-                    🗑️ Delete
+                    Delete
                   </button>
                 </div>
               </div>
