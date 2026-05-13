@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../admin/adminStyles.css";
 
-export default function Login() {
+export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,16 +17,16 @@ export default function Login() {
     }
     setError("");
     try {
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post("http://localhost:5000/admin-login", {
         email,
         password,
       });
-      console.log("Login successful", response.data);
+      console.log("Admin login successful", response.data);
       const loggedUser = response.data.user || response.data;
       localStorage.setItem("user", JSON.stringify(loggedUser));
-      navigate(loggedUser.roli === "admin" ? "/admin" : "/", { state: { action: "login" } });
+      navigate("/admin", { state: { action: "login" } });
     } catch (err) {
-      setError("Wrong credentials!");
+      setError("Invalid admin credentials!");
     }
   };
 
@@ -37,7 +37,7 @@ export default function Login() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "var(--bg)",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
         padding: 24,
       }}
     >
@@ -46,31 +46,57 @@ export default function Login() {
         style={{
           width: "min(520px, 100%)",
           padding: 34,
-          boxShadow: "var(--shadow-card)",
-          border: "1px solid var(--border)",
+          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          background: "#1e293b",
         }}
       >
-        <div className="cardHeader" style={{ marginBottom: 28 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 8,
+          }}
+        >
           <div
-            className="cardTitle"
-            style={{ fontSize: "2rem", letterSpacing: "-0.02em" }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: "var(--accent)",
+              display: "grid",
+              placeItems: "center",
+              color: "white",
+              fontWeight: 900,
+              fontSize: 18,
+            }}
           >
-            Login
+            A
           </div>
-          {/* <div className="cardSubtitle">
-            Hyni me llogarine tuaj.
-          </div> */}
+          <div>
+            <div
+              className="cardTitle"
+              style={{ fontSize: "1.6rem", color: "white" }}
+            >
+              Admin Login
+            </div>
+            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem" }}>
+              Authorized personnel only
+            </div>
+          </div>
         </div>
 
-        <form style={{ display: "grid", gap: 16 }} onSubmit={handleSubmit}>
+        <form style={{ display: "grid", gap: 16, marginTop: 28 }} onSubmit={handleSubmit}>
           {error ? (
             <div
               style={{
                 padding: 12,
                 borderRadius: "var(--radius-sm)",
-                background: "#fef2f2",
-                color: "var(--danger)",
+                background: "rgba(239,68,68,0.15)",
+                color: "#fca5a5",
                 fontWeight: 600,
+                border: "1px solid rgba(239,68,68,0.3)",
               }}
             >
               {error}
@@ -81,27 +107,27 @@ export default function Login() {
             style={{
               display: "grid",
               gap: 8,
-              fontSize: "0.95rem",
-              color: "var(--text)",
+              fontSize: "0.9rem",
+              color: "rgba(255,255,255,0.8)",
               fontWeight: 600,
             }}
           >
-            Email
+            Admin Email
             <input
               style={{
                 width: "100%",
                 minHeight: 46,
                 padding: "0 14px",
-                border: "1px solid var(--border)",
+                border: "1px solid rgba(255,255,255,0.12)",
                 borderRadius: "var(--radius-sm)",
-                background: "#f9fafb",
+                background: "rgba(255,255,255,0.06)",
                 fontSize: "0.98rem",
-                color: "var(--text)",
+                color: "white",
               }}
               type="text"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="Email ose Username"
+              placeholder="Admin email or username"
             />
           </label>
 
@@ -109,8 +135,8 @@ export default function Login() {
             style={{
               display: "grid",
               gap: 8,
-              fontSize: "0.95rem",
-              color: "var(--text)",
+              fontSize: "0.9rem",
+              color: "rgba(255,255,255,0.8)",
               fontWeight: 600,
             }}
           >
@@ -120,16 +146,16 @@ export default function Login() {
                 width: "100%",
                 minHeight: 46,
                 padding: "0 14px",
-                border: "1px solid var(--border)",
+                border: "1px solid rgba(255,255,255,0.12)",
                 borderRadius: "var(--radius-sm)",
-                background: "#f9fafb",
+                background: "rgba(255,255,255,0.06)",
                 fontSize: "0.98rem",
-                color: "var(--text)",
+                color: "white",
               }}
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Password"
+              placeholder="Enter password"
             />
           </label>
 
@@ -145,9 +171,10 @@ export default function Login() {
               fontSize: "1rem",
               fontWeight: 700,
               cursor: "pointer",
+              marginTop: 4,
             }}
           >
-            Login
+            Access Admin Panel
           </button>
         </form>
 
@@ -158,43 +185,20 @@ export default function Login() {
             justifyContent: "space-between",
             alignItems: "center",
             gap: 12,
-            color: "var(--muted)",
-            fontSize: "0.95rem",
+            color: "rgba(255,255,255,0.4)",
+            fontSize: "0.9rem",
           }}
         >
-          <span>Still don't have an account?</span>
+          <span>Not an admin?</span>
           <Link
-            to="/register"
+            to="/login"
             style={{
               color: "var(--accent)",
               textDecoration: "none",
               fontWeight: 700,
             }}
           >
-            Register here
-          </Link>
-        </div>
-
-        <div
-          style={{
-            marginTop: 12,
-            display: "flex",
-            justifyContent: "center",
-            gap: 8,
-            color: "var(--muted)",
-            fontSize: "0.85rem",
-          }}
-        >
-          <span>Admin?</span>
-          <Link
-            to="/admin-login"
-            style={{
-              color: "var(--accent)",
-              textDecoration: "none",
-              fontWeight: 700,
-            }}
-          >
-            Admin login
+            User login
           </Link>
         </div>
       </div>

@@ -57,7 +57,16 @@ export default function Register() {
       });
 
       console.log("Register successful", response.data);
-      navigate("/login");
+      const newUser = response.data.user ||
+        response.data || {
+          username,
+          email,
+          emri,
+          mbiemri,
+          roli: "user",
+        };
+      localStorage.setItem("user", JSON.stringify(newUser));
+      navigate("/", { state: { action: "signup" } });
     } catch (err) {
       setError(
         "Gabim gjatë regjistrimit. Kontrolloni të dhënat dhe provoni përsëri.",

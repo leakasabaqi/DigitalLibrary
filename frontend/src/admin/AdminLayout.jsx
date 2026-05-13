@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./adminStyles.css";
 
 const IconDot = ({ active }) => (
@@ -90,6 +90,7 @@ const NavSubItem = ({ to, label, isActive }) => {
 
 export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
 
   // Categories: Collections + Collection Books grouped, etc.
@@ -99,7 +100,7 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
       {
         group: "Core",
         items: [
-          { to: "/admin-dashboard", label: "Books" },
+          { to: "/admin", label: "Books" },
           { to: "/authors", label: "Authors" },
           { to: "/categories", label: "Categories" },
           { to: "/users", label: "Users" },
@@ -149,97 +150,163 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   };
 
   const sidebar = (
-    <aside className="adminSidebar">
-      <div className="adminBrand">
-        <div className="adminBrandTitle">Digital Library Admin</div>
-        <div
-          style={{
-            color: "rgba(229,231,235,0.9)",
-            fontWeight: 900,
-            fontSize: 12,
-          }}
-        >
-          ADMIN
+    <aside className="adminSidebar" style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <div className="adminBrand">
+          <div className="adminBrandTitle">Fletëza Admin</div>
+          <div
+            style={{
+              color: "rgba(229,231,235,0.9)",
+              fontWeight: 900,
+              fontSize: 12,
+            }}
+          >
+            ADMIN
+          </div>
         </div>
-      </div>
-      <div className="adminDivider" />
-      {nav.map((section) => (
-        <div key={section.group}>
-          <div className="adminSectionLabel">{section.group}</div>
-          <div className="adminNavGroup">
-            {section.items.map((item) => {
-              if (item.type === "group") {
-                const key = `${section.group}:${item.label}`;
-                const isOpen = openGroups[key] ?? false;
-                return (
-                  <div key={item.label}>
-                    <button
-                      type="button"
-                      onClick={() => toggleGroup(key)}
-                      className="adminNavItem"
-                      style={{ width: "100%", background: "transparent" }}
-                      aria-expanded={isOpen}
-                    >
-                      <span
-                        style={{
-                          display: "flex",
-                          gap: 10,
-                          alignItems: "center",
-                          minWidth: 0,
-                        }}
+        <div className="adminDivider" />
+        {nav.map((section) => (
+          <div key={section.group}>
+            <div className="adminSectionLabel">{section.group}</div>
+            <div className="adminNavGroup">
+              {section.items.map((item) => {
+                if (item.type === "group") {
+                  const key = `${section.group}:${item.label}`;
+                  const isOpen = openGroups[key] ?? false;
+                  return (
+                    <div key={item.label}>
+                      <button
+                        type="button"
+                        onClick={() => toggleGroup(key)}
+                        className="adminNavItem"
+                        style={{ width: "100%", background: "transparent" }}
+                        aria-expanded={isOpen}
                       >
-                        <IconDot active={false} />
                         <span
                           style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            display: "flex",
+                            gap: 10,
+                            alignItems: "center",
+                            minWidth: 0,
                           }}
                         >
-                          {item.label}
+                          <IconDot active={false} />
+                          <span
+                            style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {item.label}
+                          </span>
                         </span>
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        style={{
-                          fontWeight: 900,
-                          color: "rgba(229,231,235,0.75)",
-                          paddingLeft: 10,
-                        }}
-                      >
-                        {isOpen ? "−" : "+"}
-                      </span>
-                    </button>
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            fontWeight: 900,
+                            color: "rgba(229,231,235,0.75)",
+                            paddingLeft: 10,
+                          }}
+                        >
+                          {isOpen ? "−" : "+"}
+                        </span>
+                      </button>
 
-                    {isOpen && (
-                      <div className="adminNavSub" style={{ marginTop: 8 }}>
-                        {item.children.map((c) => (
-                          <NavSubItem
-                            key={c.to}
-                            to={c.to}
-                            label={c.label}
-                            isActive={pathname === normalizePathname(c.to)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                      {isOpen && (
+                        <div className="adminNavSub" style={{ marginTop: 8 }}>
+                          {item.children.map((c) => (
+                            <NavSubItem
+                              key={c.to}
+                              to={c.to}
+                              label={c.label}
+                              isActive={pathname === normalizePathname(c.to)}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <NavItem
+                    key={item.to}
+                    to={item.to}
+                    label={item.label}
+                    isActive={pathname === normalizePathname(item.to)}
+                  />
                 );
-              }
-
-              return (
-                <NavItem
-                  key={item.to}
-                  to={item.to}
-                  label={item.label}
-                  isActive={pathname === normalizePathname(item.to)}
-                />
-              );
-            })}
+              })}
+            </div>
+            <div className="adminDivider" />
           </div>
-          <div className="adminDivider" />
+        ))}
+      </div>
+      <div
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.10)",
+          padding: "14px 0 4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+        }}
+      >
+        <div
+          style={{
+            color: "rgba(229,231,235,0.5)",
+            fontSize: 11,
+            fontWeight: 700,
+            padding: "0 6px 4px",
+            textTransform: "uppercase",
+          }}
+        >
+          Session
         </div>
-      ))}
+        <button
+          style={{
+            width: "100%",
+            textAlign: "left",
+            background: "rgba(37, 99, 235, 0.14)",
+            border: "1px solid rgba(37, 99, 235, 0.45)",
+            color: "rgba(229,231,235,0.92)",
+            borderRadius: 12,
+            padding: "10px 12px",
+            cursor: "pointer",
+            fontWeight: 700,
+            fontSize: 13,
+            transition: "background .12s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(37, 99, 235, 0.25)" }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(37, 99, 235, 0.14)" }}
+          onClick={() => navigate("/")}
+        >
+          View Storefront
+        </button>
+        <button
+          style={{
+            width: "100%",
+            textAlign: "left",
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.10)",
+            color: "rgba(229,231,235,0.92)",
+            borderRadius: 12,
+            padding: "10px 12px",
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 13,
+            transition: "background .12s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)" }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+          onClick={() => {
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+          }}
+        >
+          Logout
+        </button>
+      </div>
     </aside>
   );
 
@@ -255,31 +322,10 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
                 <div className="adminPageSubtitle">{pageSubtitle}</div>
               ) : null}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div
-                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
-              >
-                Logged in as:{" "}
-                {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
-              </div>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius-sm)",
-                  background: "var(--surface)",
-                  color: "var(--text)",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  localStorage.removeItem("user");
-                  window.location.href = "/login";
-                }}
-              >
-                Logout
-              </button>
+            <div
+              style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
+            >
+              {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
             </div>
           </div>
           <div className="adminContent">{children}</div>

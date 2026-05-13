@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
-
 const app = express();
 
 app.use(cors());
@@ -283,7 +282,14 @@ app.post("/users", (req, res) => {
     [username, email, passwordHash, emri, mbiemri, roli],
     (err, result) => {
       if (err) return res.status(500).send(err.sqlMessage);
-      res.json("Përdoruesi u shtua!");
+      // Get the inserted user
+      const userId = result.insertId;
+      const selectSql =
+        "SELECT id, username, email, emri, mbiemri, roli FROM users WHERE id = ?";
+      db.query(selectSql, [userId], (err2, userResult) => {
+        if (err2) return res.status(500).json(err2);
+        res.json({ message: "Përdoruesi u shtua!", user: userResult[0] });
+      });
     },
   );
 });
@@ -312,12 +318,24 @@ app.delete("/users/:id", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const sql =
-    "SELECT id, username, email, emri, mbiemri, roli FROM users WHERE (email = ? OR username = ?) AND passwordHash = ?";
+    "SELECT id, username, email, emri, mbiemri, roli FROM users WHERE (email = ? OR username = ?) AND passwordHash = ? AND roli != 'admin'";
   db.query(sql, [email, email, password], (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0)
       return res.status(401).json("Kredencialet e gabuara!");
     res.json({ message: "Login i suksesshëm!", user: result[0] });
+  });
+});
+
+app.post("/admin-login", (req, res) => {
+  const { email, password } = req.body;
+  const sql =
+    "SELECT id, username, email, emri, mbiemri, roli FROM users WHERE (email = ? OR username = ?) AND passwordHash = ? AND roli = 'admin'";
+  db.query(sql, [email, email, password], (err, result) => {
+    if (err) return res.status(500).json(err);
+    if (result.length === 0)
+      return res.status(401).json("Kredencialet e gabuara!");
+    res.json({ message: "Admin login i suksesshëm!", user: result[0] });
   });
 });
 

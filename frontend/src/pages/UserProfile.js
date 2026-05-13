@@ -187,28 +187,55 @@ export default function UserProfile() {
                     <h1 style={{ fontSize: "2rem", margin: 0 }}>
                       {user.emri} {user.mbiemri}
                     </h1>
-                    <button
-                      onClick={handleEditProfile}
-                      style={{
-                        padding: "8px 16px",
-                        border: "1px solid var(--border)",
-                        borderRadius: "var(--radius-sm)",
-                        background: "var(--accent)",
-                        color: "white",
-                        fontSize: "0.9rem",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        transition: "background 0.2s",
-                      }}
-                      onMouseOver={(e) =>
-                        (e.target.style.background = "var(--accent-hover)")
-                      }
-                      onMouseOut={(e) =>
-                        (e.target.style.background = "var(--accent)")
-                      }
-                    >
-                      Edit Profile
-                    </button>
+                    <div style={{ display: "flex", gap: 12 }}>
+                      <button
+                        onClick={handleEditProfile}
+                        style={{
+                          padding: "8px 16px",
+                          border: "1px solid var(--border)",
+                          borderRadius: "var(--radius-sm)",
+                          background: "var(--accent)",
+                          color: "white",
+                          fontSize: "0.9rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          transition: "background 0.2s",
+                        }}
+                        onMouseOver={(e) =>
+                          (e.target.style.background = "var(--accent-hover)")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.background = "var(--accent)")
+                        }
+                      >
+                        Edit Profile
+                      </button>
+                      {/* <button
+                        onClick={() => {
+                          localStorage.removeItem("user");
+                          window.location.href = "/";
+                        }}
+                        style={{
+                          padding: "8px 16px",
+                          border: "1px solid var(--border)",
+                          borderRadius: "var(--radius-sm)",
+                          background: "transparent",
+                          color: "var(--text)",
+                          fontSize: "0.9rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          transition: "background 0.2s",
+                        }}
+                        onMouseOver={(e) =>
+                          (e.target.style.background = "#f3f4f6")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.background = "transparent")
+                        }
+                      >
+                        Logout
+                      </button> */}
+                    </div>
                   </div>
                   <div
                     style={{

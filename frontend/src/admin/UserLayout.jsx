@@ -59,6 +59,11 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   const nav = useMemo(
     () => [
       {
@@ -74,43 +79,101 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
   );
 
   const sidebar = (
-    <aside className="adminSidebar">
-      <div className="adminBrand">
-        <div className="adminBrandTitle">My Library</div>
+    <aside className="adminSidebar" style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <div className="adminBrand">
+          <div className="adminBrandTitle">My Library</div>
+          <div
+            style={{
+              color: "rgba(229,231,235,0.9)",
+              fontWeight: 900,
+              fontSize: 12,
+            }}
+          >
+            USER
+          </div>
+        </div>
+        <div className="adminDivider" />
+        {nav.map((section) => (
+          <div key={section.group}>
+            <div className="adminSectionLabel">{section.group}</div>
+            <div className="adminNavGroup">
+              {section.items.map((item) => (
+                <NavItem
+                  key={item.to}
+                  to={item.to}
+                  label={item.label}
+                  isActive={pathname === normalizePathname(item.to)}
+                />
+              ))}
+            </div>
+            <div className="adminDivider" />
+          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          borderTop: "1px solid rgba(255,255,255,0.10)",
+          padding: "14px 0 4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+        }}
+      >
         <div
           style={{
-            color: "rgba(229,231,235,0.9)",
-            fontWeight: 900,
-            fontSize: 12,
+            color: "rgba(229,231,235,0.5)",
+            fontSize: 11,
+            fontWeight: 700,
+            padding: "0 6px 4px",
+            textTransform: "uppercase",
           }}
         >
-          USER
+          Session
         </div>
+        <button
+          style={{
+            width: "100%",
+            textAlign: "left",
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.10)",
+            color: "rgba(229,231,235,0.92)",
+            borderRadius: 12,
+            padding: "10px 12px",
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 13,
+            transition: "background .12s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)" }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+          onClick={() => navigate("/")}
+        >
+          Back to Home
+        </button>
+        <button
+          style={{
+            width: "100%",
+            textAlign: "left",
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.10)",
+            color: "rgba(229,231,235,0.92)",
+            borderRadius: 12,
+            padding: "10px 12px",
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 13,
+            transition: "background .12s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)" }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       </div>
-      <div className="adminDivider" />
-      {nav.map((section) => (
-        <div key={section.group}>
-          <div className="adminSectionLabel">{section.group}</div>
-          <div className="adminNavGroup">
-            {section.items.map((item) => (
-              <NavItem
-                key={item.to}
-                to={item.to}
-                label={item.label}
-                isActive={pathname === normalizePathname(item.to)}
-              />
-            ))}
-          </div>
-          <div className="adminDivider" />
-        </div>
-      ))}
     </aside>
   );
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
 
   return (
     <div className="adminRoot">
@@ -124,27 +187,10 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
                 <div className="adminPageSubtitle">{pageSubtitle}</div>
               ) : null}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div
-                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
-              >
-                Logged in as: {user?.emri || "User"}
-              </div>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius-sm)",
-                  background: "var(--surface)",
-                  color: "var(--text)",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+            <div
+              style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
+            >
+              {user?.emri || "User"}
             </div>
           </div>
           <div className="adminContent">{children}</div>

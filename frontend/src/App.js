@@ -337,7 +337,9 @@ import CollectionBooks from "./pages/CollectionBooks";
 import Bookmarks from "./pages/Bookmarks";
 import BookRequests from "./pages/BookRequests";
 import Login from "./pages/Login";
+import AdminLogin from "./pages/AdminLogin";
 import Register from "./pages/Register";
+import LandingPage from "./pages/LandingPage";
 import UserProfile from "./pages/UserProfile";
 
 // Komponenti per te mbrojtur rruget e Adminit
@@ -360,20 +362,6 @@ const UserRoute = ({ children }) => {
   }
 
   return children;
-};
-
-const RootRedirect = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (user?.roli === "admin") {
-    return <Navigate to="/admin-dashboard" replace />;
-  }
-
-  if (user) {
-    return <Navigate to="/user-profile" replace />;
-  }
-
-  return <Navigate to="/login" replace />;
 };
 
 const DashboardHome = ({ books }) => {
@@ -513,6 +501,7 @@ function App() {
       <Routes>
         {/* Rruget publike */}
         <Route path="/login" element={<Login />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/register" element={<Register />} />
 
         {/* Dashboard-i kryesor i Adminit */}
@@ -663,8 +652,25 @@ function App() {
           }
         />
 
-        {/* Ridrejtimi automatik nese hapet root "/" */}
-        <Route path="/" element={<RootRedirect />} />
+        {/* Admin dashboard path */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout
+                pageTitle="Dashboard"
+                pageSubtitle="Admin panel overview"
+              >
+                <DashboardHome books={books} />
+                <div className="card" style={{ marginTop: 14 }}>
+                  <AddBook />
+                </div>
+              </AdminLayout>
+            </AdminRoute>
+          }
+        />
+
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );
