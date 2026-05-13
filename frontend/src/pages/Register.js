@@ -10,7 +10,6 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [adminCode, setAdminCode] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -45,12 +44,6 @@ export default function Register() {
       return;
     }
 
-    const role = adminCode.trim() === "ADMIN123" ? "admin" : "user";
-    if (adminCode.trim() && role !== "admin") {
-      setError("Kodi i adminit nuk është i saktë.");
-      return;
-    }
-
     setError("");
 
     try {
@@ -60,7 +53,7 @@ export default function Register() {
         passwordHash: password,
         emri,
         mbiemri,
-        roli: role,
+        roli: "user",
       });
 
       console.log("Register successful", response.data);
@@ -97,10 +90,7 @@ export default function Register() {
             className="cardTitle"
             style={{ fontSize: "2rem", letterSpacing: "-0.02em" }}
           >
-            Registration
-          </div>
-          <div className="cardSubtitle">
-            Create a new account to log in to the system.
+            Sign Up
           </div>
         </div>
 
@@ -233,25 +223,6 @@ export default function Register() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
-            />
-          </label>
-
-          <label
-            style={{
-              display: "grid",
-              gap: 8,
-              fontSize: "0.95rem",
-              color: "var(--text)",
-              fontWeight: 600,
-            }}
-          >
-            Admin Code (optional)
-            <input
-              style={inputStyle}
-              type="text"
-              value={adminCode}
-              onChange={(e) => setAdminCode(e.target.value)}
-              placeholder="Enter the admin code if you have one"
             />
           </label>
 

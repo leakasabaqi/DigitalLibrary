@@ -338,6 +338,7 @@ import Bookmarks from "./pages/Bookmarks";
 import BookRequests from "./pages/BookRequests";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import UserProfile from "./pages/UserProfile";
 
 // Komponenti per te mbrojtur rruget e Adminit
 const AdminRoute = ({ children }) => {
@@ -532,21 +533,15 @@ function App() {
           }
         />
 
-        {/* Faqja e Profilit per User-at e thjeshte */}
         <Route
           path="/user-profile"
           element={
             <UserRoute>
-              <div style={{ padding: 40 }}>
-                <h1>Miresevini ne profilin tuaj</h1>
-                <p>Ketu mund te shihni librat tuaj dhe historine e leximit.</p>
-                {/* Mund ta krijosh si file te vecante me vone */}
-              </div>
+              <UserProfile />
             </UserRoute>
           }
         />
 
-        {/* Te gjitha rruget e tjera te Adminit mbrohen me AdminRoute */}
         <Route
           path="/authors"
           element={
