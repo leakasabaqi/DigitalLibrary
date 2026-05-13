@@ -135,46 +135,106 @@ const AddBook = () => {
         <form onSubmit={handleSubmit} className="formGrid">
           <div className="field">
             <label className="label">Book Title *</label>
-            <input className="input" name="titulli" value={book.titulli || ""} placeholder="Enter title" onChange={handleChange} required />
+            <input
+              className="input"
+              name="titulli"
+              value={book.titulli || ""}
+              placeholder="Enter title"
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="field">
             <label className="label">Author *</label>
-            <select className="select" name="autori_id" value={book.autori_id || ""} onChange={handleChange} required>
+            <select
+              className="select"
+              name="autori_id"
+              value={book.autori_id || ""}
+              onChange={handleChange}
+              required
+            >
               <option value="">Select author</option>
               {authors.map((a) => (
-                <option key={a.id} value={a.id}>{a.emri} {a.mbiemri}</option>
+                <option key={a.id} value={a.id}>
+                  {a.emri} {a.mbiemri}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="field">
             <label className="label">Category *</label>
-            <select className="select" name="kategoria_id" value={book.kategoria_id || ""} onChange={handleChange} required>
+            <select
+              className="select"
+              name="kategoria_id"
+              value={book.kategoria_id || ""}
+              onChange={handleChange}
+              required
+            >
               <option value="">Select category</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.emertimi || c.emri_kategorise}</option>
+                <option key={c.id} value={c.id}>
+                  {c.emertimi || c.emri_kategorise}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="field">
             <label className="label">ISBN</label>
-            <input className="input" name="isbn" value={book.isbn || ""} placeholder="ISBN" onChange={handleChange} />
+            <input
+              className="input"
+              name="isbn"
+              value={book.isbn || ""}
+              placeholder="ISBN"
+              onChange={handleChange}
+            />
           </div>
 
           <div className="field">
             <label className="label">Publication Year</label>
-            <input className="input" name="viti_botimit" type="number" value={book.viti_botimit || ""} onChange={handleChange} />
+            <input
+              className="input"
+              name="viti_botimit"
+              type="number"
+              value={book.viti_botimit || ""}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="field">
             <label className="label">Language</label>
-            <input className="input" name="gjuha" value={book.gjuha || ""} onChange={handleChange} />
+            <input
+              className="input"
+              name="gjuha"
+              value={book.gjuha || ""}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field">
+            <label className="label">Page Count</label>
+            <input
+              className="input"
+              name="numri_faqeve"
+              type="number"
+              value={book.numri_faqeve || ""}
+              placeholder="Total pages"
+              onChange={handleChange}
+            />
           </div>
 
           {/* Image Input with Preview - Keeping your layout but adding functionality */}
-          <div className="field" style={{ gridColumn: "1 / -1", display: "flex", gap: "15px", alignItems: "flex-end" }}>
+          <div
+            className="field"
+            style={{
+              gridColumn: "1 / -1",
+              display: "flex",
+              gap: "15px",
+              alignItems: "flex-end",
+            }}
+          >
             <div style={{ flex: 1 }}>
               <label className="label">Cover Image URL</label>
               <input
@@ -186,9 +246,25 @@ const AddBook = () => {
               />
             </div>
             {/* Small dynamic preview next to the input */}
-            <div style={{ width: "60px", height: "80px", border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: "#f9f9f9" }}>
+            <div
+              style={{
+                width: "60px",
+                height: "80px",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#f9f9f9",
+              }}
+            >
               {book.foto_kopertines ? (
-                <img src={book.foto_kopertines} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img
+                  src={book.foto_kopertines}
+                  alt="Preview"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               ) : (
                 <span style={{ fontSize: "10px", color: "#999" }}>No Img</span>
               )}
@@ -200,7 +276,22 @@ const AddBook = () => {
               {book.id ? "Save Changes" : "Add Book"}
             </button>
             {book.id && (
-              <button type="button" className="btn btnGhost" onClick={() => setBook({ titulli: "", autori_id: "", kategoria_id: "", isbn: "", viti_botimit: "", gjuha: "", numri_faqeve: "", foto_kopertines: "" })}>
+              <button
+                type="button"
+                className="btn btnGhost"
+                onClick={() =>
+                  setBook({
+                    titulli: "",
+                    autori_id: "",
+                    kategoria_id: "",
+                    isbn: "",
+                    viti_botimit: "",
+                    gjuha: "",
+                    numri_faqeve: "",
+                    foto_kopertines: "",
+                  })
+                }
+              >
                 Cancel Edit
               </button>
             )}
@@ -220,29 +311,85 @@ const AddBook = () => {
 
         {books.length === 0 ? (
           <div className="cardTight" style={{ textAlign: "center" }}>
-            <div className="cardTitle" style={{ fontSize: 18, marginBottom: 8 }}>No books yet</div>
+            <div
+              className="cardTitle"
+              style={{ fontSize: 18, marginBottom: 8 }}
+            >
+              No books yet
+            </div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 18 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gap: 18,
+            }}
+          >
             {books.map((b) => (
               <div key={b.id} className="card" style={{ position: "relative" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    marginBottom: 16,
+                  }}
+                >
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>{b.titulli}</div>
-                    <div className="help">Author: {b.emri} {b.mbiemri}</div>
+                    <div
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "#0f172a",
+                        marginBottom: 6,
+                      }}
+                    >
+                      {b.titulli}
+                    </div>
+                    <div className="help">
+                      Author: {b.emri} {b.mbiemri}
+                    </div>
                     <div className="help">ISBN: {b.isbn || "N/A"}</div>
                   </div>
                   {/* Book Cover displayed in the card */}
                   <img
-                    src={b.foto_kopertines || "https://via.placeholder.com/72x96?text=No+Cover"}
+                    src={
+                      b.foto_kopertines ||
+                      "https://via.placeholder.com/72x96?text=No+Cover"
+                    }
                     alt="Cover"
-                    style={{ width: 72, height: 96, objectFit: "cover", borderRadius: 12, boxShadow: "0 4px 18px rgba(15,23,42,0.08)" }}
+                    style={{
+                      width: 72,
+                      height: 96,
+                      objectFit: "cover",
+                      borderRadius: 12,
+                      boxShadow: "0 4px 18px rgba(15,23,42,0.08)",
+                    }}
                   />
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-                  <button type="button" className="btn btnPrimary" onClick={() => handleEdit(b)}>Edit</button>
-                  <button type="button" className="btn btnDanger" onClick={() => handleDelete(b.id)}>Delete</button>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 10,
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btnPrimary"
+                    onClick={() => handleEdit(b)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btnDanger"
+                    onClick={() => handleDelete(b.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}

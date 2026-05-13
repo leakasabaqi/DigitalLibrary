@@ -10,7 +10,9 @@ const IconDot = ({ active }) => (
       height: 10,
       borderRadius: 3,
       background: active ? "rgba(37,99,235,0.95)" : "rgba(255,255,255,0.18)",
-      border: active ? "1px solid rgba(255,255,255,0.35)" : "1px solid rgba(255,255,255,0.10)",
+      border: active
+        ? "1px solid rgba(255,255,255,0.35)"
+        : "1px solid rgba(255,255,255,0.10)",
       boxShadow: active ? "0 0 0 3px rgba(37,99,235,0.12)" : "none",
       display: "inline-block",
       flex: "0 0 auto",
@@ -27,9 +29,24 @@ const NavItem = ({ to, label, isActive }) => {
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
       <div className={`adminNavItem ${isActive ? "adminNavItemActive" : ""}`}>
-        <span style={{ display: "flex", gap: 10, alignItems: "center", minWidth: 0 }}>
+        <span
+          style={{
+            display: "flex",
+            gap: 10,
+            alignItems: "center",
+            minWidth: 0,
+          }}
+        >
           <IconDot active={isActive} />
-          <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+          <span
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {label}
+          </span>
         </span>
       </div>
     </Link>
@@ -39,7 +56,9 @@ const NavItem = ({ to, label, isActive }) => {
 const NavSubItem = ({ to, label, isActive }) => {
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
-      <div className={`adminNavSubItem ${isActive ? "adminNavSubItemActive" : ""}`}>
+      <div
+        className={`adminNavSubItem ${isActive ? "adminNavSubItemActive" : ""}`}
+      >
         <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <span
             aria-hidden="true"
@@ -47,23 +66,29 @@ const NavSubItem = ({ to, label, isActive }) => {
               width: 8,
               height: 8,
               borderRadius: 2,
-              background: isActive ? "rgba(37,99,235,0.95)" : "rgba(255,255,255,0.20)",
+              background: isActive
+                ? "rgba(37,99,235,0.95)"
+                : "rgba(255,255,255,0.20)",
               border: "1px solid rgba(255,255,255,0.12)",
               flex: "0 0 auto",
             }}
           />
-          <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+          <span
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {label}
+          </span>
         </span>
       </div>
     </Link>
   );
 };
 
-export default function AdminLayout({
-  pageTitle,
-  pageSubtitle,
-  children,
-}) {
+export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   const location = useLocation();
   const pathname = normalizePathname(location.pathname);
 
@@ -74,7 +99,7 @@ export default function AdminLayout({
       {
         group: "Core",
         items: [
-          { to: "/", label: "Books" },
+          { to: "/admin-dashboard", label: "Books" },
           { to: "/authors", label: "Authors" },
           { to: "/categories", label: "Categories" },
           { to: "/users", label: "Users" },
@@ -106,10 +131,13 @@ export default function AdminLayout({
       },
       {
         group: "Requests",
-        items: [{ to: "/bookmarks", label: "Bookmarks" }, { to: "/requests", label: "Book Requests" }],
+        items: [
+          { to: "/bookmarks", label: "Bookmarks" },
+          { to: "/requests", label: "Book Requests" },
+        ],
       },
     ],
-    []
+    [],
   );
 
   const [openGroups, setOpenGroups] = useState(() => ({
@@ -124,7 +152,15 @@ export default function AdminLayout({
     <aside className="adminSidebar">
       <div className="adminBrand">
         <div className="adminBrandTitle">Digital Library Admin</div>
-        <div style={{ color: "rgba(229,231,235,0.9)", fontWeight: 900, fontSize: 12 }}>ADMIN</div>
+        <div
+          style={{
+            color: "rgba(229,231,235,0.9)",
+            fontWeight: 900,
+            fontSize: 12,
+          }}
+        >
+          ADMIN
+        </div>
       </div>
       <div className="adminDivider" />
       {nav.map((section) => (
@@ -144,9 +180,24 @@ export default function AdminLayout({
                       style={{ width: "100%", background: "transparent" }}
                       aria-expanded={isOpen}
                     >
-                      <span style={{ display: "flex", gap: 10, alignItems: "center", minWidth: 0 }}>
+                      <span
+                        style={{
+                          display: "flex",
+                          gap: 10,
+                          alignItems: "center",
+                          minWidth: 0,
+                        }}
+                      >
                         <IconDot active={false} />
-                        <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</span>
+                        <span
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {item.label}
+                        </span>
                       </span>
                       <span
                         aria-hidden="true"
@@ -200,9 +251,35 @@ export default function AdminLayout({
           <div className="adminTopbar">
             <div className="adminTopbarLeft">
               <div className="adminPageTitle">{pageTitle}</div>
-              {pageSubtitle ? <div className="adminPageSubtitle">{pageSubtitle}</div> : null}
+              {pageSubtitle ? (
+                <div className="adminPageSubtitle">{pageSubtitle}</div>
+              ) : null}
             </div>
-            <div style={{ color: "rgba(100,116,139,1)", fontWeight: 800, fontSize: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
+              >
+                Logged in as:{" "}
+                {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
+              </div>
+              <button
+                style={{
+                  padding: "8px 16px",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--surface)",
+                  color: "var(--text)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  window.location.href = "/login";
+                }}
+              >
+                Logout
+              </button>
             </div>
           </div>
           <div className="adminContent">{children}</div>
