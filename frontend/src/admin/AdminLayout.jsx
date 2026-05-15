@@ -2,23 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./adminStyles.css";
 
-const IconDot = ({ active }) => (
-  <span
-    aria-hidden="true"
-    style={{
-      width: 10,
-      height: 10,
-      borderRadius: 3,
-      background: active ? "rgba(37,99,235,0.95)" : "rgba(255,255,255,0.18)",
-      border: active
-        ? "1px solid rgba(255,255,255,0.35)"
-        : "1px solid rgba(255,255,255,0.10)",
-      boxShadow: active ? "0 0 0 3px rgba(37,99,235,0.12)" : "none",
-      display: "inline-block",
-      flex: "0 0 auto",
-    }}
-  />
-);
+const borderColor = "rgba(15,23,42,0.10)";
 
 function normalizePathname(pathname) {
   if (!pathname || pathname === "/") return "/";
@@ -26,63 +10,56 @@ function normalizePathname(pathname) {
 }
 
 const NavItem = ({ to, label, isActive }) => {
+  const accent = "#2563eb";
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
-      <div className={`adminNavItem ${isActive ? "adminNavItemActive" : ""}`}>
-        <span
-          style={{
-            display: "flex",
-            gap: 10,
-            alignItems: "center",
-            minWidth: 0,
-          }}
-        >
-          <IconDot active={isActive} />
-          <span
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {label}
-          </span>
-        </span>
+      <div
+        style={{
+          padding: "10px 14px",
+          borderRadius: 10,
+          background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+          color: isActive ? accent : "#334155",
+          fontWeight: isActive ? 700 : 600,
+          fontSize: 14,
+          border: `1px solid ${isActive ? "rgba(37,99,235,0.20)" : "transparent"}`,
+          transition: "all .12s ease",
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) e.currentTarget.style.background = "#f1f5f9";
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) e.currentTarget.style.background = "transparent";
+        }}
+      >
+        {label}
       </div>
     </Link>
   );
 };
 
 const NavSubItem = ({ to, label, isActive }) => {
+  const accent = "#2563eb";
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
       <div
-        className={`adminNavSubItem ${isActive ? "adminNavSubItemActive" : ""}`}
+        style={{
+          padding: "9px 14px",
+          borderRadius: 8,
+          background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+          color: isActive ? accent : "#475569",
+          fontWeight: isActive ? 700 : 600,
+          fontSize: 13,
+          border: `1px solid ${isActive ? "rgba(37,99,235,0.20)" : "transparent"}`,
+          transition: "all .12s ease",
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) e.currentTarget.style.background = "#f1f5f9";
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) e.currentTarget.style.background = "transparent";
+        }}
       >
-        <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <span
-            aria-hidden="true"
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 2,
-              background: isActive
-                ? "rgba(37,99,235,0.95)"
-                : "rgba(255,255,255,0.20)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              flex: "0 0 auto",
-            }}
-          />
-          <span
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {label}
-          </span>
-        </span>
+        {label}
       </div>
     </Link>
   );
@@ -93,8 +70,6 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
 
-  // Categories: Collections + Collection Books grouped, etc.
-  // Keep labels professional, no emoji.
   const nav = useMemo(
     () => [
       {
@@ -118,7 +93,6 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
       },
       {
         group: "Collections",
-        // Sub-items example requested: Collection + Collection Books in same category
         items: [
           {
             type: "group",
@@ -150,25 +124,71 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   };
 
   const sidebar = (
-    <aside className="adminSidebar" style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <div className="adminBrand">
-          <div className="adminBrandTitle">Fletëza Admin</div>
+    <aside
+      style={{
+        width: 260,
+        flexShrink: 0,
+        background: "#fff",
+        borderRight: `1px solid ${borderColor}`,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        position: "sticky",
+        top: 0,
+        alignSelf: "start",
+        boxShadow: "4px 0 24px rgba(15,23,42,0.06)",
+        zIndex: 2,
+      }}
+    >
+      <div style={{ flex: 1, minHeight: 0, padding: "20px 14px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 4px 14px",
+            marginBottom: 8,
+            borderBottom: `1px solid ${borderColor}`,
+          }}
+        >
+          <Link
+            to="/"
+            style={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: "#0f172a",
+              textDecoration: "none",
+            }}
+          >
+            Fletëza
+          </Link>
           <div
             style={{
-              color: "rgba(229,231,235,0.9)",
+              color: "#94a3b8",
               fontWeight: 900,
-              fontSize: 12,
+              fontSize: 11,
+              letterSpacing: "0.04em",
             }}
           >
             ADMIN
           </div>
         </div>
-        <div className="adminDivider" />
+
         {nav.map((section) => (
           <div key={section.group}>
-            <div className="adminSectionLabel">{section.group}</div>
-            <div className="adminNavGroup">
+            <div
+              style={{
+                color: "#94a3b8",
+                fontSize: 11,
+                fontWeight: 700,
+                padding: "12px 4px 8px",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+              }}
+            >
+              {section.group}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {section.items.map((item) => {
                 if (item.type === "group") {
                   const key = `${section.group}:${item.label}`;
@@ -178,43 +198,55 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
                       <button
                         type="button"
                         onClick={() => toggleGroup(key)}
-                        className="adminNavItem"
-                        style={{ width: "100%", background: "transparent" }}
+                        style={{
+                          width: "100%",
+                          textAlign: "left",
+                          background: "transparent",
+                          border: "none",
+                          borderRadius: 10,
+                          padding: "10px 14px",
+                          cursor: "pointer",
+                          fontWeight: 600,
+                          fontSize: 14,
+                          color: "#334155",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 10,
+                          fontFamily: "inherit",
+                          transition: "background .12s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "#f1f5f9";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "transparent";
+                        }}
                         aria-expanded={isOpen}
                       >
-                        <span
-                          style={{
-                            display: "flex",
-                            gap: 10,
-                            alignItems: "center",
-                            minWidth: 0,
-                          }}
-                        >
-                          <IconDot active={false} />
-                          <span
-                            style={{
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        </span>
+                        <span>{item.label}</span>
                         <span
                           aria-hidden="true"
                           style={{
                             fontWeight: 900,
-                            color: "rgba(229,231,235,0.75)",
+                            color: "#94a3b8",
                             paddingLeft: 10,
                           }}
                         >
-                          {isOpen ? "−" : "+"}
+                          {isOpen ? "\u2212" : "+"}
                         </span>
                       </button>
 
                       {isOpen && (
-                        <div className="adminNavSub" style={{ marginTop: 8 }}>
+                        <div
+                          style={{
+                            paddingLeft: 8,
+                            marginTop: 6,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                          }}
+                        >
                           {item.children.map((c) => (
                             <NavSubItem
                               key={c.to}
@@ -239,26 +271,27 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
                 );
               })}
             </div>
-            <div className="adminDivider" />
           </div>
         ))}
       </div>
+
       <div
         style={{
-          borderTop: "1px solid rgba(255,255,255,0.10)",
-          padding: "14px 0 4px",
+          borderTop: `1px solid ${borderColor}`,
+          padding: "14px 14px 20px",
           display: "flex",
           flexDirection: "column",
-          gap: 8,
+          gap: 6,
         }}
       >
         <div
           style={{
-            color: "rgba(229,231,235,0.5)",
+            color: "#94a3b8",
             fontSize: 11,
             fontWeight: 700,
-            padding: "0 6px 4px",
+            padding: "0 4px 4px",
             textTransform: "uppercase",
+            letterSpacing: "0.04em",
           }}
         >
           Session
@@ -267,18 +300,23 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
           style={{
             width: "100%",
             textAlign: "left",
-            background: "rgba(37, 99, 235, 0.14)",
-            border: "1px solid rgba(37, 99, 235, 0.45)",
-            color: "rgba(229,231,235,0.92)",
-            borderRadius: 12,
+            background: "rgba(37, 99, 235, 0.10)",
+            border: "1px solid rgba(37, 99, 235, 0.25)",
+            color: "#2563eb",
+            borderRadius: 10,
             padding: "10px 12px",
             cursor: "pointer",
             fontWeight: 700,
             fontSize: 13,
-            transition: "background .12s ease",
+            transition: "all .12s ease",
+            fontFamily: "inherit",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(37, 99, 235, 0.25)" }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(37, 99, 235, 0.14)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(37, 99, 235, 0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(37, 99, 235, 0.10)";
+          }}
           onClick={() => navigate("/")}
         >
           View Storefront
@@ -288,17 +326,22 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
             width: "100%",
             textAlign: "left",
             background: "transparent",
-            border: "1px solid rgba(255,255,255,0.10)",
-            color: "rgba(229,231,235,0.92)",
-            borderRadius: 12,
+            border: `1px solid ${borderColor}`,
+            color: "#334155",
+            borderRadius: 10,
             padding: "10px 12px",
             cursor: "pointer",
             fontWeight: 600,
             fontSize: 13,
-            transition: "background .12s ease",
+            transition: "all .12s ease",
+            fontFamily: "inherit",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)" }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#f8fafc";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+          }}
           onClick={() => {
             localStorage.removeItem("user");
             window.location.href = "/login";

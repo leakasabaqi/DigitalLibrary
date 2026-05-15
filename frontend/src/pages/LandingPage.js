@@ -59,7 +59,7 @@ export default function LandingPage() {
       }}
     >
       <Link
-        to="/"
+        to="/browse"
         style={{
           ...headerButton,
           background: "transparent",
@@ -129,7 +129,7 @@ export default function LandingPage() {
       }}
     >
       <Link
-        to="/"
+        to="/browse"
         style={{
           ...headerButton,
           background: "transparent",
@@ -273,7 +273,7 @@ export default function LandingPage() {
                 </>
               ) : user.roli === "admin" ? (
                 <Link
-to="/admin"
+                  to="/admin"
                   style={{
                     padding: "14px 26px",
                     borderRadius: 12,

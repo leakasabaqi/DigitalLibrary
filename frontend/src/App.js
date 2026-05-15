@@ -341,6 +341,7 @@ import AdminLogin from "./pages/AdminLogin";
 import Register from "./pages/Register";
 import LandingPage from "./pages/LandingPage";
 import UserProfile from "./pages/UserProfile";
+import BrowseBooks from "./pages/BrowseBooks";
 
 // Komponenti per te mbrojtur rruget e Adminit
 const AdminRoute = ({ children }) => {
@@ -503,6 +504,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Browse books by category */}
+        <Route path="/browse" element={<BrowseBooks />} />
 
         {/* Dashboard-i kryesor i Adminit */}
         <Route
