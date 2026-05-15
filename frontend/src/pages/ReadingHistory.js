@@ -54,14 +54,16 @@ const ReadingHistory = () => {
     fetchData();
   }, []);
 
-  const handleFaqjaChange = (val, selectedLibriId = record.libri_id) => {
-    const faqja = parseInt(val, 10) || 0;
-    const libri = books.find((b) => b.id === parseInt(selectedLibriId, 10));
+  const calcPercent = (faqja, libriId) => {
+    const libri = books.find((b) => Number(b.id) === Number(libriId));
+    if (!libri || !libri.numri_faqeve || libri.numri_faqeve <= 0) return 0;
+    return Math.min(Math.round((faqja / libri.numri_faqeve) * 100), 100);
+  };
 
-    let perqindja = 0;
-    if (libri && libri.numri_faqeve > 0) {
-      perqindja = Math.min(Math.round((faqja / libri.numri_faqeve) * 100), 100);
-    }
+  const handleFaqjaChange = (val, libriId) => {
+    const faqja = parseInt(val, 10) || 0;
+    const id = libriId != null ? libriId : record.libri_id;
+    const perqindja = calcPercent(faqja, id);
 
     setRecord((prev) => ({
       ...prev,

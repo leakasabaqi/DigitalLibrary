@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
+import Header from "../components/Header";
 
 const borderColor = "rgba(15,23,42,0.10)";
 
@@ -42,6 +43,14 @@ const NavItem = ({ to, label, isActive }) => {
 
 function Sidebar({ pathname }) {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 980);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -62,6 +71,8 @@ function Sidebar({ pathname }) {
     [],
   );
 
+  if (isMobile) return null;
+
   return (
     <aside
       style={{
@@ -80,28 +91,7 @@ function Sidebar({ pathname }) {
       }}
     >
       <div style={{ flex: 1, minHeight: 0, padding: "20px 14px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 4px 14px",
-            marginBottom: 8,
-            borderBottom: `1px solid ${borderColor}`,
-          }}
-        >
-          <Link
-            to="/"
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "#0f172a",
-              textDecoration: "none",
-            }}
-          >
-            Fletëza
-          </Link>
-        </div>
+        <div style={{ height: 14 }} />
 
         {nav.map((section) => (
           <div key={section.group}>
@@ -373,119 +363,14 @@ function CategoryGrid() {
 }
 
 function PublicBrowse() {
-  const accent = "#2563eb";
-  const user = JSON.parse(localStorage.getItem("user"));
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const update = () => setIsMobile(window.innerWidth < 860);
+    const update = () => setIsMobile(window.innerWidth < 980);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
-
-  const headerButton = {
-    padding: "12px 20px",
-    borderRadius: 18,
-    fontWeight: 700,
-    textDecoration: "none",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 44,
-  };
-
-  const headerActions = user ? (
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: isMobile ? "flex-start" : "flex-end",
-        width: isMobile ? "100%" : "auto",
-      }}
-    >
-      {user.roli === "admin" ? (
-        <Link
-          to="/admin"
-          style={{
-            ...headerButton,
-            background: accent,
-            color: "white",
-            border: "none",
-            borderRadius: 12,
-          }}
-        >
-          Admin Panel
-        </Link>
-      ) : (
-        <Link
-          to="/user-profile"
-          style={{
-            ...headerButton,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 10,
-            background: "rgba(37, 99, 235, 0.12)",
-            color: accent,
-            border: "1px solid rgba(37, 99, 235, 0.20)",
-          }}
-        >
-          <span
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              background: accent,
-              color: "white",
-              display: "grid",
-              placeItems: "center",
-              fontWeight: 800,
-            }}
-          >
-            {user.emri?.charAt(0).toUpperCase()}
-          </span>
-          Profile
-        </Link>
-      )}
-    </div>
-  ) : (
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: isMobile ? "flex-start" : "flex-end",
-        width: isMobile ? "100%" : "auto",
-      }}
-    >
-      <Link
-        to="/login"
-        style={{
-          ...headerButton,
-          background: "transparent",
-          color: "#0f172a",
-          border: "none",
-        }}
-      >
-        Login
-      </Link>
-      <Link
-        to="/register"
-        style={{
-          ...headerButton,
-          background: accent,
-          color: "white",
-          border: "none",
-          borderRadius: 12,
-        }}
-      >
-        Sign Up to Read
-      </Link>
-    </div>
-  );
 
   return (
     <div
@@ -495,38 +380,15 @@ function PublicBrowse() {
         color: "#0f172a",
       }}
     >
+      <Header />
       <div
         style={{
           maxWidth: 1240,
           margin: "0 auto",
-          padding: "28px 24px 48px",
+          padding: "0 24px 48px",
         }}
       >
-        <header
-          style={{
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            marginBottom: 42,
-          }}
-        >
-          <Link
-            to="/"
-            style={{
-              fontWeight: 800,
-              fontSize: 24,
-              textDecoration: "none",
-              color: "#0f172a",
-            }}
-          >
-            Fletëza
-          </Link>
-          {headerActions}
-        </header>
-
-        <div style={{ marginBottom: 32 }}>
+        <div style={{ marginTop: 42, marginBottom: 32 }}>
           <h1
             style={{
               fontSize: isMobile ? "1.8rem" : "2.4rem",
@@ -560,29 +422,48 @@ function LoggedInBrowse() {
   const location = useLocation();
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 980);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const sidebarNav = [
+    { to: "/user-profile", label: "My Profile" },
+    { to: "/user-wishlist", label: "My Wishlist" },
+    { to: "/user-reading-history", label: "Reading History" },
+  ];
 
   return (
     <div style={{ minHeight: "100vh", background: "#f6f7fb" }}>
-      <div style={{ display: "flex", minHeight: "100vh" }}>
+      <Header showSidebar sidebarNav={sidebarNav} pathname={pathname} />
+      <div style={{ display: "flex", minHeight: "100vh", paddingTop: 24 }}>
         <Sidebar pathname={pathname} />
         <div
           style={{
             flex: 1,
             minWidth: 0,
-            padding: "24px 28px 40px",
+            padding: isMobile ? "0 16px 40px" : "0 28px 40px",
           }}
         >
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              flexDirection: isMobile ? "column" : "row",
+              alignItems: isMobile ? "flex-start" : "center",
               justifyContent: "space-between",
               gap: 14,
               marginBottom: 24,
+              marginTop: isMobile ? 20 : 0,
             }}
           >
-            <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
-              <div style={{ fontSize: 18, fontWeight: 800 }}>Browse Books</div>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "baseline", gap: 6 }}>
+              <div style={{ fontSize: isMobile ? 20 : 18, fontWeight: 800 }}>
+                Browse Books
+              </div>
               <div
                 style={{
                   fontSize: 13,

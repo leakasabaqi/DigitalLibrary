@@ -331,6 +331,7 @@ import AddPlan from "./pages/addPlan";
 import AddSubscription from "./pages/addSubscription";
 import ReadingHistory from "./pages/ReadingHistory";
 import Reviews from "./pages/Reviews";
+import UserReadingHistory from "./pages/UserReadingHistory";
 import Wishlists from "./pages/Wishlists";
 import Collections from "./pages/Collections";
 import CollectionBooks from "./pages/CollectionBooks";
@@ -531,6 +532,15 @@ function App() {
           element={
             <UserRoute>
               <UserProfile />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-reading-history"
+          element={
+            <UserRoute>
+              <UserReadingHistory />
             </UserRoute>
           }
         />

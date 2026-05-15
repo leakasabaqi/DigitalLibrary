@@ -424,19 +424,41 @@ app.delete("/subscriptions/:id", (req, res) => {
   });
 });
 
-app.get("/reading-history", (req, res) => {
+app.get("/currently-reading/:userId", (req, res) => {
+  const userId = req.params.userId;
   const sql = `
+    SELECT rh.*, b.titulli, b.foto_kopertines, b.numri_faqeve
+    FROM readinghistory rh
+    JOIN books b ON rh.libri_id = b.id
+    WHERE rh.perdoruesi_id = ? AND rh.statusi = 'duke e lexuar'
+  `;
+  db.query(sql, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json(data);
+  });
+});
+
+app.get("/reading-history", (req, res) => {
+  const userId = req.query.perdoruesi_id;
+  let sql = `
     SELECT 
       rh.*, 
       u.emri, 
       u.mbiemri, 
-      b.titulli AS libri_titulli 
+      b.titulli AS libri_titulli,
+      b.numri_faqeve,
+      b.foto_kopertines
     FROM readinghistory rh
     JOIN users u ON rh.perdoruesi_id = u.id
     JOIN books b ON rh.libri_id = b.id
   `;
+  const params = [];
+  if (userId) {
+    sql += " WHERE rh.perdoruesi_id = ?";
+    params.push(userId);
+  }
 
-  db.query(sql, (err, data) => {
+  db.query(sql, params, (err, data) => {
     if (err) {
       console.error("GABIM NË GET:", err.sqlMessage);
       return res.status(500).json(err);

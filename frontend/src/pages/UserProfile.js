@@ -8,6 +8,7 @@ export default function UserProfile() {
   const [wishlist, setWishlist] = useState([]);
   const [readingHistory, setReadingHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState({
     emri: "",
@@ -16,6 +17,13 @@ export default function UserProfile() {
     email: "",
   });
   const [editLoading, setEditLoading] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 980);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -28,7 +36,6 @@ export default function UserProfile() {
   const fetchUserData = async (userId) => {
     try {
       setLoading(true);
-      // Fetch currently reading books
       const booksRes = await axios.get(
         `http://localhost:5000/currently-reading/${userId}`,
       );
@@ -42,7 +49,7 @@ export default function UserProfile() {
 
       // Fetch reading history
       const historyRes = await axios.get(
-        `http://localhost:5000/reading-history/${userId}`,
+        `http://localhost:5000/reading-history?perdoruesi_id=${userId}`,
       );
       setReadingHistory(historyRes.data || []);
     } catch (err) {
@@ -151,23 +158,24 @@ export default function UserProfile() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "150px 1fr",
-                  gap: 32,
+                  gridTemplateColumns: isMobile ? "1fr" : "150px 1fr",
+                  gap: isMobile ? 16 : 32,
                   alignItems: "start",
+                  justifyItems: isMobile ? "center" : "start",
                 }}
               >
                 {/* Profile Picture Placeholder */}
                 <div
                   style={{
-                    width: 150,
-                    height: 150,
+                    width: isMobile ? 100 : 150,
+                    height: isMobile ? 100 : 150,
                     borderRadius: "50%",
                     background: "var(--accent)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "white",
-                    fontSize: "3rem",
+                    fontSize: isMobile ? "2rem" : "3rem",
                     fontWeight: 700,
                   }}
                 >
@@ -175,16 +183,19 @@ export default function UserProfile() {
                 </div>
 
                 {/* Profile Details */}
-                <div>
+                <div style={{ width: "100%" }}>
                   <div
                     style={{
                       display: "flex",
+                      flexDirection: isMobile ? "column" : "row",
                       justifyContent: "space-between",
-                      alignItems: "start",
+                      alignItems: isMobile ? "center" : "start",
+                      gap: 12,
                       marginBottom: 12,
+                      textAlign: isMobile ? "center" : "left",
                     }}
                   >
-                    <h1 style={{ fontSize: "2rem", margin: 0 }}>
+                    <h1 style={{ fontSize: isMobile ? "1.5rem" : "2rem", margin: 0 }}>
                       {user.emri} {user.mbiemri}
                     </h1>
                     <div style={{ display: "flex", gap: 12 }}>

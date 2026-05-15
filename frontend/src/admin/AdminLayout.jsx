@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 import "./adminStyles.css";
 
 const borderColor = "rgba(15,23,42,0.10)";
@@ -69,6 +70,15 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
+  const [isMobile, setIsMobile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 980);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const nav = useMemo(
     () => [
@@ -123,56 +133,10 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
     setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const sidebar = (
-    <aside
-      style={{
-        width: 260,
-        flexShrink: 0,
-        background: "#fff",
-        borderRight: `1px solid ${borderColor}`,
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        position: "sticky",
-        top: 0,
-        alignSelf: "start",
-        boxShadow: "4px 0 24px rgba(15,23,42,0.06)",
-        zIndex: 2,
-      }}
-    >
+  const sidebarContent = (
+    <>
       <div style={{ flex: 1, minHeight: 0, padding: "20px 14px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 4px 14px",
-            marginBottom: 8,
-            borderBottom: `1px solid ${borderColor}`,
-          }}
-        >
-          <Link
-            to="/"
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "#0f172a",
-              textDecoration: "none",
-            }}
-          >
-            Fletëza
-          </Link>
-          <div
-            style={{
-              color: "#94a3b8",
-              fontWeight: 900,
-              fontSize: 11,
-              letterSpacing: "0.04em",
-            }}
-          >
-            ADMIN
-          </div>
-        </div>
+        <div style={{ height: 14 }} />
 
         {nav.map((section) => (
           <div key={section.group}>
@@ -350,13 +314,86 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
           Logout
         </button>
       </div>
+    </>
+  );
+
+  const desktopSidebar = (
+    <aside
+      style={{
+        width: 260,
+        flexShrink: 0,
+        background: "#fff",
+        borderRight: `1px solid ${borderColor}`,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        position: "sticky",
+        top: 0,
+        alignSelf: "start",
+        boxShadow: "4px 0 24px rgba(15,23,42,0.06)",
+        zIndex: 2,
+      }}
+    >
+      {sidebarContent}
     </aside>
+  );
+
+  const mobileDrawer = (
+    <>
+      {sidebarOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.3)",
+            zIndex: 99,
+          }}
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: 280,
+          background: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: "4px 0 24px rgba(15,23,42,0.15)",
+          zIndex: 100,
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform .2s ease",
+        }}
+      >
+        <div style={{ padding: "14px", textAlign: "right" }}>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              background: "transparent",
+              border: "none",
+              fontSize: 24,
+              cursor: "pointer",
+              color: "#64748b",
+              padding: "4px 8px",
+              fontFamily: "inherit",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+        {sidebarContent}
+      </aside>
+    </>
   );
 
   return (
     <div className="adminRoot">
-      <div className="adminShell">
-        {sidebar}
+      <Header hamburger={isMobile} onHamburgerClick={() => setSidebarOpen(true)} />
+      {isMobile && mobileDrawer}
+      <div className={isMobile ? "" : "adminShell"}>
+        {!isMobile && desktopSidebar}
         <div className="adminMain">
           <div className="adminTopbar">
             <div className="adminTopbarLeft">
@@ -365,11 +402,13 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
                 <div className="adminPageSubtitle">{pageSubtitle}</div>
               ) : null}
             </div>
-            <div
-              style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
-            >
-              {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
-            </div>
+            {!isMobile && (
+              <div
+                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
+              >
+                {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
+              </div>
+            )}
           </div>
           <div className="adminContent">{children}</div>
         </div>

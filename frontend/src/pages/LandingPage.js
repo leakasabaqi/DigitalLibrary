@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Header from "../components/Header";
 
 export default function LandingPage() {
   const accent = "#2563eb";
@@ -13,7 +14,7 @@ export default function LandingPage() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const update = () => setIsMobile(window.innerWidth < 860);
+    const update = () => setIsMobile(window.innerWidth < 980);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
@@ -36,161 +37,20 @@ export default function LandingPage() {
     navigate("/");
   };
 
-  const headerButton = {
-    padding: "12px 20px",
-    borderRadius: 18,
-    fontWeight: 700,
-    textDecoration: "none",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 44,
-  };
-
-  const headerActions = user ? (
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: isMobile ? "flex-start" : "flex-end",
-        width: isMobile ? "100%" : "auto",
-      }}
-    >
-      <Link
-        to="/browse"
-        style={{
-          ...headerButton,
-          background: "transparent",
-          color: "#0f172a",
-          border: "none",
-        }}
-      >
-        Browse
-      </Link>
-      {user.roli === "admin" ? (
-        <Link
-          to="/admin"
-          style={{
-            ...headerButton,
-            background: accent,
-            color: "white",
-            border: "none",
-            borderRadius: 12,
-            background: accent,
-            color: "white",
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          Admin Panel
-        </Link>
-      ) : (
-        <Link
-          to="/user-profile"
-          style={{
-            ...headerButton,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 10,
-            background: "rgba(37, 99, 235, 0.12)",
-            color: accent,
-            border: "1px solid rgba(37, 99, 235, 0.20)",
-          }}
-        >
-          <span
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              background: accent,
-              color: "white",
-              display: "grid",
-              placeItems: "center",
-              fontWeight: 800,
-            }}
-          >
-            {user.emri?.charAt(0).toUpperCase()}
-          </span>
-          Profile
-        </Link>
-      )}
-    </div>
-  ) : (
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: isMobile ? "flex-start" : "flex-end",
-        width: isMobile ? "100%" : "auto",
-      }}
-    >
-      <Link
-        to="/browse"
-        style={{
-          ...headerButton,
-          background: "transparent",
-          color: "#0f172a",
-          border: "none",
-        }}
-      >
-        Browse
-      </Link>
-      <Link
-        to="/login"
-        style={{
-          ...headerButton,
-          background: "transparent",
-          color: "#0f172a",
-          border: "none",
-        }}
-      >
-        Login
-      </Link>
-      <Link
-        to="/register"
-        style={{
-          ...headerButton,
-          background: accent,
-          color: "white",
-          border: "none",
-          borderRadius: 12,
-        }}
-      >
-        Sign Up to Read
-      </Link>
-    </div>
-  );
-
   return (
     <div
       style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a" }}
     >
+      <Header />
       <div
-        style={{ maxWidth: 1240, margin: "0 auto", padding: "28px 24px 48px" }}
+        style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px 48px" }}
       >
-        <header
-          style={{
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            marginBottom: 42,
-          }}
-        >
-          <div style={{ fontWeight: 800, fontSize: 24 }}> Fletëza</div>
-          {headerActions}
-        </header>
-
         <section
           style={{
             display: "grid",
             gap: 34,
             alignItems: "center",
+            marginTop: 42,
             gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1fr) 380px",
           }}
         >

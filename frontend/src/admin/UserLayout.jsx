@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 import "./adminStyles.css";
 
 const borderColor = "rgba(15,23,42,0.10)";
@@ -42,24 +43,34 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
   const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 980);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
 
+  const sidebarNav = [
+    { to: "/user-profile", label: "My Profile" },
+    { to: "/user-wishlist", label: "My Wishlist" },
+    { to: "/user-reading-history", label: "Reading History" },
+  ];
+
   const nav = useMemo(
     () => [
       {
         group: "My Library",
-        items: [
-          { to: "/user-profile", label: "My Profile" },
-          { to: "/user-wishlist", label: "My Wishlist" },
-          { to: "/user-reading-history", label: "Reading History" },
-        ],
+        items: sidebarNav,
       },
     ],
-    [],
+    [sidebarNav],
   );
 
   const sidebar = (
@@ -80,38 +91,7 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
       }}
     >
       <div style={{ flex: 1, minHeight: 0, padding: "20px 14px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 4px 14px",
-            marginBottom: 8,
-            borderBottom: `1px solid ${borderColor}`,
-          }}
-        >
-          <Link
-            to="/"
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "#0f172a",
-              textDecoration: "none",
-            }}
-          >
-            Fletëza
-          </Link>
-          <div
-            style={{
-              color: "#94a3b8",
-              fontWeight: 900,
-              fontSize: 11,
-              letterSpacing: "0.04em",
-            }}
-          >
-            USER
-          </div>
-        </div>
+        <div style={{ height: 14 }} />
 
         {nav.map((section) => (
           <div key={section.group}>
@@ -218,8 +198,10 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
 
   return (
     <div className="adminRoot">
-      <div className="adminShell">
-        {sidebar}
+      <Header showSidebar sidebarNav={sidebarNav} pathname={pathname} />
+      <div style={!isMobile ? { paddingTop: 24 } : {}}>
+        <div className={isMobile ? "" : "adminShell"}>
+        {!isMobile && sidebar}
         <div className="adminMain">
           <div className="adminTopbar">
             <div className="adminTopbarLeft">
@@ -228,14 +210,17 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
                 <div className="adminPageSubtitle">{pageSubtitle}</div>
               ) : null}
             </div>
-            <div
-              style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
-            >
-              {user?.emri || "User"}
-            </div>
+            {!isMobile && (
+              <div
+                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
+              >
+                {user?.emri || "User"}
+              </div>
+            )}
           </div>
           <div className="adminContent">{children}</div>
         </div>
+      </div>
       </div>
     </div>
   );
