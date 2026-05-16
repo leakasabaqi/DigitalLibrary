@@ -43,7 +43,7 @@ export default function UserProfile() {
 
       // Fetch user wishlist
       const wishlistRes = await axios.get(
-        `http://localhost:5000/wishlists/${userId}`,
+        `http://localhost:5000/wishlists?perdoruesi_id=${userId}`,
       );
       setWishlist(wishlistRes.data || []);
 

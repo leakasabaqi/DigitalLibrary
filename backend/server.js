@@ -583,13 +583,19 @@ app.delete("/reviews/:id", (req, res) => {
 });
 
 app.get("/wishlists", (req, res) => {
-  const sql = `
-        SELECT w.*, u.emri, u.mbiemri, b.titulli 
-        FROM wishlists w
-        JOIN users u ON w.perdoruesi_id = u.id
-        JOIN books b ON w.libri_id = b.id
-    `;
-  db.query(sql, (err, data) => {
+  const userId = req.query.perdoruesi_id;
+  let sql = `
+    SELECT w.*, u.emri, u.mbiemri, b.titulli, b.foto_kopertines
+    FROM wishlists w
+    JOIN users u ON w.perdoruesi_id = u.id
+    JOIN books b ON w.libri_id = b.id
+  `;
+  const params = [];
+  if (userId) {
+    sql += " WHERE w.perdoruesi_id = ?";
+    params.push(userId);
+  }
+  db.query(sql, params, (err, data) => {
     if (err) return res.status(500).json(err);
     res.json(data);
   });

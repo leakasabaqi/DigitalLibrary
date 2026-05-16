@@ -333,6 +333,7 @@ import ReadingHistory from "./pages/ReadingHistory";
 import Reviews from "./pages/Reviews";
 import UserReadingHistory from "./pages/UserReadingHistory";
 import UserCollections from "./pages/UserCollections";
+import UserWishlist from "./pages/UserWishlist";
 import UserBookmarks from "./pages/UserBookmarks";
 import UserBookRequests from "./pages/UserBookRequests";
 import Wishlists from "./pages/Wishlists";
@@ -544,6 +545,15 @@ function App() {
           element={
             <UserRoute>
               <UserReadingHistory />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-wishlist"
+          element={
+            <UserRoute>
+              <UserWishlist />
             </UserRoute>
           }
         />
