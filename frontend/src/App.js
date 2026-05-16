@@ -332,6 +332,9 @@ import AddSubscription from "./pages/addSubscription";
 import ReadingHistory from "./pages/ReadingHistory";
 import Reviews from "./pages/Reviews";
 import UserReadingHistory from "./pages/UserReadingHistory";
+import UserCollections from "./pages/UserCollections";
+import UserBookmarks from "./pages/UserBookmarks";
+import UserBookRequests from "./pages/UserBookRequests";
 import Wishlists from "./pages/Wishlists";
 import Collections from "./pages/Collections";
 import CollectionBooks from "./pages/CollectionBooks";
@@ -541,6 +544,33 @@ function App() {
           element={
             <UserRoute>
               <UserReadingHistory />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-collections"
+          element={
+            <UserRoute>
+              <UserCollections />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-bookmarks"
+          element={
+            <UserRoute>
+              <UserBookmarks />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-book-requests"
+          element={
+            <UserRoute>
+              <UserBookRequests />
             </UserRoute>
           }
         />

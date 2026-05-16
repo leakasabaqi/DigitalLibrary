@@ -61,6 +61,9 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
     { to: "/user-profile", label: "My Profile" },
     { to: "/user-wishlist", label: "My Wishlist" },
     { to: "/user-reading-history", label: "Reading History" },
+    { to: "/user-collections", label: "Collections" },
+    { to: "/user-bookmarks", label: "Bookmarks" },
+    { to: "/user-book-requests", label: "Book Requests" },
   ];
 
   const nav = useMemo(

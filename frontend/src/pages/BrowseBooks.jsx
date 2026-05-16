@@ -65,6 +65,9 @@ function Sidebar({ pathname }) {
           { to: "/user-profile", label: "My Profile" },
           { to: "/user-wishlist", label: "My Wishlist" },
           { to: "/user-reading-history", label: "Reading History" },
+          { to: "/user-collections", label: "Collections" },
+          { to: "/user-bookmarks", label: "Bookmarks" },
+          { to: "/user-book-requests", label: "Book Requests" },
         ],
       },
     ],
@@ -435,6 +438,9 @@ function LoggedInBrowse() {
     { to: "/user-profile", label: "My Profile" },
     { to: "/user-wishlist", label: "My Wishlist" },
     { to: "/user-reading-history", label: "Reading History" },
+    { to: "/user-collections", label: "Collections" },
+    { to: "/user-bookmarks", label: "Bookmarks" },
+    { to: "/user-book-requests", label: "Book Requests" },
   ];
 
   return (
