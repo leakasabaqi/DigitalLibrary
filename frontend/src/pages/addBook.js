@@ -233,6 +233,7 @@ const AddBook = () => {
               display: "flex",
               gap: "15px",
               alignItems: "flex-end",
+              flexWrap: "wrap",
             }}
           >
             <div style={{ flex: 1 }}>
@@ -322,52 +323,53 @@ const AddBook = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               gap: 18,
             }}
           >
             {books.map((b) => (
               <div key={b.id} className="card" style={{ position: "relative" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: 12,
-                    marginBottom: 16,
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "#0f172a",
-                        marginBottom: 6,
-                      }}
-                    >
-                      {b.titulli}
-                    </div>
-                    <div className="help">
-                      Author: {b.emri} {b.mbiemri}
-                    </div>
-                    <div className="help">ISBN: {b.isbn || "N/A"}</div>
-                  </div>
-                  {/* Book Cover displayed in the card */}
-                  <img
-                    src={
-                      b.foto_kopertines ||
-                      "https://via.placeholder.com/72x96?text=No+Cover"
-                    }
-                    alt="Cover"
+                  <div
                     style={{
-                      width: 72,
-                      height: 96,
-                      objectFit: "cover",
-                      borderRadius: 12,
-                      boxShadow: "0 4px 18px rgba(15,23,42,0.08)",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      marginBottom: 16,
+                      flexWrap: "wrap",
                     }}
-                  />
-                </div>
+                  >
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 700,
+                          color: "#0f172a",
+                          marginBottom: 6,
+                        }}
+                      >
+                        {b.titulli}
+                      </div>
+                      <div className="help">
+                        Author: {b.emri} {b.mbiemri}
+                      </div>
+                      <div className="help">ISBN: {b.isbn || "N/A"}</div>
+                    </div>
+                    {/* Book Cover displayed in the card */}
+                    <img
+                      src={
+                        b.foto_kopertines ||
+                        "https://via.placeholder.com/72x96?text=No+Cover"
+                      }
+                      alt="Cover"
+                      style={{
+                        width: 72,
+                        height: 96,
+                        objectFit: "cover",
+                        borderRadius: 12,
+                        boxShadow: "0 4px 18px rgba(15,23,42,0.08)",
+                      }}
+                    />
+                  </div>
 
                 <div
                   style={{
@@ -378,14 +380,14 @@ const AddBook = () => {
                 >
                   <button
                     type="button"
-                    className="btn btnPrimary"
+                    className="btn btnGhost"
                     onClick={() => handleEdit(b)}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
-                    className="btn btnDanger"
+                    className="btn btnGhost"
                     onClick={() => handleDelete(b.id)}
                   >
                     Delete

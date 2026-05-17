@@ -244,7 +244,7 @@ const AddCategory = () => {
                 {c.pershkrimi && (
                   <div
                     style={{
-                      fontSize: "0.85rem",
+                      fontSize: "0.8rem",
                       color: "#4a5568",
                       lineHeight: 1.4,
                       marginBottom: 10,
@@ -260,23 +260,13 @@ const AddCategory = () => {
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
                     onClick={() => handleEdit(c)}
-                    className="btn btnPrimary"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
+                    className="btn btnGhost"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    className="btn btnDanger"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
+                    className="btn btnGhost"
                   >
                     Delete
                   </button>

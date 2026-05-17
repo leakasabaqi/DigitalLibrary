@@ -9,11 +9,10 @@ export default function UserWishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);

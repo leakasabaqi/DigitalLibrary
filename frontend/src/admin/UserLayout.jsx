@@ -43,11 +43,10 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
   const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
@@ -64,6 +63,7 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
     { to: "/user-collections", label: "Collections" },
     { to: "/user-bookmarks", label: "Bookmarks" },
     { to: "/user-book-requests", label: "Book Requests" },
+    { to: "/user-subscriptions", label: "Subscriptions" },
   ];
 
   const nav = useMemo(

@@ -102,12 +102,11 @@ export default function LandingPage() {
   const location = useLocation();
   const action = location.state?.action;
   const displayName = user?.emri || user?.username || "there";
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);

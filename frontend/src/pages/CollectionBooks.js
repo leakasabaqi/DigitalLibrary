@@ -116,7 +116,7 @@ const CollectionBooks = () => {
           <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
             <button
               type="submit"
-              className={isEditing ? "btn btnPrimary" : "btn btnAccent"}
+              className={isEditing ? "btn btnAccent" : "btn btnAccent"}
             >
               {isEditing ? "Save Changes" : "Add to Collection"}
             </button>
@@ -191,7 +191,7 @@ const CollectionBooks = () => {
                         </button>
                         <button
                           type="button"
-                          className="btn btnDanger"
+                          className="btn btnGhost"
                           onClick={async () => {
                             if (
                               window.confirm(

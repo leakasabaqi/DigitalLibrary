@@ -247,7 +247,7 @@ const Reviews = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               gap: 18,
             }}
           >
@@ -288,7 +288,7 @@ const Reviews = () => {
                     </button>
                     <button
                       type="button"
-                      className="btn btnDanger"
+                      className="btn btnGhost"
                       onClick={async () => {
                         if (window.confirm("Delete this review?")) {
                           await axios.delete(

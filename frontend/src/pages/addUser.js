@@ -303,23 +303,13 @@ const AddUser = () => {
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
                     onClick={() => handleEdit(u)}
-                    className="btn btnPrimary"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
+                    className="btn btnGhost"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(u.id)}
-                    className="btn btnDanger"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
+                    className="btn btnGhost"
                   >
                     Delete
                   </button>

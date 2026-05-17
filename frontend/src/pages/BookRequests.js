@@ -88,12 +88,7 @@ const BookRequests = () => {
                 <form
                     onSubmit={handleSubmit}
                     className="formGrid"
-                    style={{
-                        gridTemplateColumns: isEditing
-                            ? "1fr 1fr"
-                            : "repeat(3, minmax(0, 1fr))",
-                        gap: 18,
-                    }}
+                    style={{ gap: 18 }}
                 >
                     <div className="field">
                         <label className="label">User</label>
@@ -230,7 +225,7 @@ const BookRequests = () => {
                                             </button>
                                             <button
                                                 type="button"
-                                                className="btn btnDanger"
+                                                className="btn btnGhost"
                                                 onClick={async () => {
                                                     if (window.confirm("Fshije?")) {
                                                         await axios.delete(

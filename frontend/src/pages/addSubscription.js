@@ -113,7 +113,6 @@ const AddSubscription = () => {
         <form
           onSubmit={handleSubmit}
           className="formGrid"
-          style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
         >
           <div className="field">
             <label className="label">Select User *</label>
@@ -222,7 +221,7 @@ const AddSubscription = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
             gap: 14,
           }}
         >
@@ -266,7 +265,7 @@ const AddSubscription = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(s.id)}
-                      className="btn btnDanger"
+                      className="btn btnGhost"
                     >
                       Delete
                     </button>

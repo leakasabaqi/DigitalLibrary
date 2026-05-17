@@ -153,7 +153,7 @@ const Collections = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
             gap: 18,
           }}
         >
@@ -195,7 +195,7 @@ const Collections = () => {
                   </button>
                   <button
                     type="button"
-                    className="btn btnDanger"
+                    className="btn btnGhost"
                     onClick={async () => {
                       if (
                         window.confirm("A dëshironi ta fshini këtë koleksion?")

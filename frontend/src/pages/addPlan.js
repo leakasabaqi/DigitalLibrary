@@ -71,6 +71,7 @@ const AddPlan = () => {
 
   const handleEdit = (p) => {
     setPlan({ ...p });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
@@ -85,241 +86,76 @@ const AddPlan = () => {
   };
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div>
       {/* Header */}
-      <div
-        style={{
-          marginBottom: "2rem",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontWeight: "700",
-            color: "#2d3748",
-            marginBottom: "0.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-          }}
-        >
+      <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>
+        <div className="adminPageTitle" style={{ fontSize: 28, marginBottom: 8 }}>
           Subscription Plans
-        </h1>
-        <p
-          style={{
-            fontSize: "1.1rem",
-            color: "#718096",
-            fontWeight: "400",
-          }}
-        >
+        </div>
+        <div className="adminPageSubtitle">
           {plan.id
             ? "Edit existing subscription plan"
             : "Create new subscription plans for your library"}
-        </p>
+        </div>
       </div>
 
       {/* Form Card */}
-      <div
-        style={{
-          background: "white",
-          borderRadius: "16px",
-          padding: "2.5rem",
-          marginBottom: "3rem",
-          boxShadow: "0 4px 25px rgba(0,0,0,0.1)",
-          border: "1px solid rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: "600",
-            color: "#2d3748",
-            marginBottom: "2rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
+      <div className="card">
+        <div className="cardTitle" style={{ fontSize: 22, marginBottom: 20 }}>
           {plan.id ? "Edit Plan" : "Create New Plan"}
-        </h2>
+        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "1.5rem",
-          }}
-        >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Plan Name *
-              </label>
-              <input
-                name="emertimi"
-                value={plan.emertimi || ""}
-                placeholder="Enter plan name (e.g. Premium)"
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="formGrid" style={{ gap: 18 }}>
+          <div className="field">
+            <label className="label">Plan Name *</label>
+            <input
+              className="input"
+              name="emertimi"
+              value={plan.emertimi || ""}
+              placeholder="Enter plan name (e.g. Premium)"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Monthly Price (€) *
-              </label>
-              <input
-                name="cmimi_mujor"
-                type="number"
-                step="0.01"
-                value={plan.cmimi_mujor || ""}
-                placeholder="Enter monthly price"
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
+          <div className="field">
+            <label className="label">Monthly Price (€) *</label>
+            <input
+              className="input"
+              name="cmimi_mujor"
+              type="number"
+              step="0.01"
+              value={plan.cmimi_mujor || ""}
+              placeholder="Enter monthly price"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Max Books per Month *
-              </label>
-              <input
-                name="librat_max_mujor"
-                type="number"
-                value={plan.librat_max_mujor || ""}
-                placeholder="Enter book limit"
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-            </div>
+          <div className="field">
+            <label className="label">Max Books per Month *</label>
+            <input
+              className="input"
+              name="librat_max_mujor"
+              type="number"
+              value={plan.librat_max_mujor || ""}
+              placeholder="Enter book limit"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#4a5568",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Plan Status
-              </label>
-              <select
-                name="statusi"
-                value={plan.statusi || "aktiv"}
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontFamily: "'Poppins', sans-serif",
-                  backgroundColor: "white",
-                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow =
-                    "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                  e.target.style.boxShadow = "none";
-                }}
-              >
-                <option value="aktiv">Active</option>
-                <option value="jo-aktiv">Inactive</option>
-              </select>
-            </div>
+          <div className="field">
+            <label className="label">Plan Status</label>
+            <select
+              className="select"
+              name="statusi"
+              value={plan.statusi || "aktiv"}
+              onChange={handleChange}
+            >
+              <option value="aktiv">Active</option>
+              <option value="jo-aktiv">Inactive</option>
+            </select>
           </div>
 
           <div className="field" style={{ gridColumn: "1 / -1" }}>
@@ -335,12 +171,13 @@ const AddPlan = () => {
 
           <div className="field" style={{ gridColumn: "1 / -1" }}>
             <label
+              className="help"
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
                 cursor: "pointer",
-                fontWeight: 500,
+                fontWeight: 600,
               }}
             >
               <input
@@ -396,8 +233,8 @@ const AddPlan = () => {
         ) : (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              display: "flex",
+              flexDirection: "column",
               gap: 12,
             }}
           >
@@ -405,7 +242,7 @@ const AddPlan = () => {
               <div
                 key={p.id}
                 style={{
-                  padding: 12,
+                  padding: "14px 16px",
                   border: "1px solid #e2e8f0",
                   borderRadius: 10,
                   position: "relative",
@@ -481,7 +318,7 @@ const AddPlan = () => {
                     marginBottom: 8,
                   }}
                 >
-                  <div>Up to {p.librat_max_mujor} books/month</div>
+                  <div>{Number(p.librat_max_mujor) === -1 ? "Unlimited books" : `Up to ${p.librat_max_mujor} books/month`}</div>
                   <div>
                     {p.a_ka_shkarkim === 1 || p.a_ka_shkarkim === "1"
                       ? "✓ Download"
@@ -503,27 +340,11 @@ const AddPlan = () => {
                     {p.pershkrimi}
                   </div>
                 )}
-                <div style={{ display: "flex", gap: 6 }}>
-                  <button
-                    onClick={() => handleEdit(p)}
-                    className="btn btnPrimary"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
-                  >
+                <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                  <button onClick={() => handleEdit(p)} className="btn btnGhost">
                     Edit
                   </button>
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="btn btnDanger"
-                    style={{
-                      flex: 1,
-                      fontSize: "0.85rem",
-                      padding: "6px 10px",
-                    }}
-                  >
+                  <button onClick={() => handleDelete(p.id)} className="btn btnGhost">
                     Delete
                   </button>
                 </div>

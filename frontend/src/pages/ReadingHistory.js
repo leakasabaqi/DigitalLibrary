@@ -151,7 +151,6 @@ const ReadingHistory = () => {
         <form
           onSubmit={handleSubmit}
           className="formGrid"
-          style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
         >
           <div className="field">
             <label className="label">Përdoruesi</label>
@@ -264,7 +263,7 @@ const ReadingHistory = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               gap: 14,
             }}
           >
@@ -321,7 +320,7 @@ const ReadingHistory = () => {
                       </button>
                       <button
                         type="button"
-                        className="btn btnDanger"
+                        className="btn btnGhost"
                         onClick={async () => {
                           if (window.confirm("A jeni i sigurt?")) {
                             await axios.delete(

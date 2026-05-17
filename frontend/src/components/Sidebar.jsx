@@ -34,11 +34,10 @@ const NavItem = ({ to, label, isActive }) => {
 
 export default function Sidebar({ open, pathname }) {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);

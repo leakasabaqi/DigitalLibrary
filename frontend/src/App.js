@@ -336,6 +336,7 @@ import UserCollections from "./pages/UserCollections";
 import UserWishlist from "./pages/UserWishlist";
 import UserBookmarks from "./pages/UserBookmarks";
 import UserBookRequests from "./pages/UserBookRequests";
+import UserSubscriptions from "./pages/UserSubscriptions";
 import Wishlists from "./pages/Wishlists";
 import Collections from "./pages/Collections";
 import CollectionBooks from "./pages/CollectionBooks";
@@ -372,7 +373,7 @@ const UserRoute = ({ children }) => {
 
 const DashboardHome = ({ books }) => {
   return (
-    <div className="card" style={{ padding: 18 }}>
+    <div className="card">
       <div className="cardHeader" style={{ marginBottom: 12 }}>
         <div>
           <div className="cardTitle">Library Overview</div>
@@ -380,45 +381,18 @@ const DashboardHome = ({ books }) => {
         </div>
       </div>
 
-      <div
-        className="formGrid"
-        style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
-      >
-        <div
-          className="cardTight"
-          style={{
-            background: "#fff",
-            border: "1px solid rgba(15,23,42,0.10)",
-          }}
-        >
-          <div style={{ fontWeight: 900, fontSize: 26 }}>{books.length}</div>
-          <div className="help" style={{ fontSize: 12 }}>
-            Total Books
-          </div>
+      <div className="statGrid">
+        <div className="cardTight">
+          <div className="statNumber">{books.length}</div>
+          <div className="help">Total Books</div>
         </div>
-        <div
-          className="cardTight"
-          style={{
-            background: "#fff",
-            border: "1px solid rgba(15,23,42,0.10)",
-          }}
-        >
-          <div style={{ fontWeight: 900, fontSize: 26 }}>—</div>
-          <div className="help" style={{ fontSize: 12 }}>
-            Digital Library
-          </div>
+        <div className="cardTight">
+          <div className="statNumber">—</div>
+          <div className="help">Digital Library</div>
         </div>
-        <div
-          className="cardTight"
-          style={{
-            background: "#fff",
-            border: "1px solid rgba(15,23,42,0.10)",
-          }}
-        >
-          <div style={{ fontWeight: 900, fontSize: 26 }}>—</div>
-          <div className="help" style={{ fontSize: 12 }}>
-            Fast Access
-          </div>
+        <div className="cardTight">
+          <div className="statNumber">—</div>
+          <div className="help">Fast Access</div>
         </div>
       </div>
 
@@ -430,6 +404,7 @@ const DashboardHome = ({ books }) => {
           alignItems: "baseline",
           justifyContent: "space-between",
           gap: 12,
+          flexWrap: "wrap",
         }}
       >
         <div>
@@ -581,6 +556,15 @@ function App() {
           element={
             <UserRoute>
               <UserBookRequests />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-subscriptions"
+          element={
+            <UserRoute>
+              <UserSubscriptions />
             </UserRoute>
           }
         />

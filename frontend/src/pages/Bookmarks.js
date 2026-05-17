@@ -206,7 +206,7 @@ const Bookmarks = () => {
                   </button>
                   <button
                     type="button"
-                    className="btn btnDanger"
+                    className="btn btnGhost"
                     onClick={async () => {
                       if (window.confirm("Fshije?")) {
                         await axios.delete(

@@ -22,7 +22,7 @@ const calcPercent = (faqja, total) => {
 
 export default function UserReadingHistory() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
   const [history, setHistory] = useState([]);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,6 @@ export default function UserReadingHistory() {
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);

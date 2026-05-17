@@ -5,14 +5,11 @@ const accent = "#2563eb";
 
 export default function Header({ showSidebar, sidebarNav, pathname, brandLink, hamburger, onHamburgerClick }) {
   const [user, setUser] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
-    const updateUser = () =>
-      setUser(JSON.parse(localStorage.getItem("user")));
-    updateUser();
-    window.addEventListener("storage", updateUser);
-    return () => window.removeEventListener("storage", updateUser);
+    const stored = localStorage.getItem("user");
+    if (stored) setUser(JSON.parse(stored));
   }, []);
 
   useEffect(() => {
@@ -53,6 +50,25 @@ export default function Header({ showSidebar, sidebarNav, pathname, brandLink, h
         }}
       >
         Browse
+      </Link>
+      <Link
+        to="/user-subscriptions"
+        style={{
+          ...mobileBtn,
+          padding: mobileBtn.padding || "10px 16px",
+          borderRadius: mobileBtn.borderRadius || 12,
+          fontWeight: 700,
+          textDecoration: "none",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: mobileBtn.minHeight || 44,
+          background: "transparent",
+          color: "#0f172a",
+          border: "none",
+        }}
+      >
+        Plans
       </Link>
       {user.roli === "admin" ? (
         <Link

@@ -8,7 +8,7 @@ export default function UserProfile() {
   const [wishlist, setWishlist] = useState([]);
   const [readingHistory, setReadingHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState({
     emri: "",
@@ -20,7 +20,6 @@ export default function UserProfile() {
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);

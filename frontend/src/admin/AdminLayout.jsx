@@ -70,12 +70,10 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = normalizePathname(location.pathname);
-  const [isMobile, setIsMobile] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
@@ -94,9 +92,9 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
       {
         group: "Publishing",
         items: [
-          { to: "/plans", label: "Subscription Plans" },
+          { to: "/plans", label: "Plans" },
           { to: "/subscriptions", label: "Subscriptions" },
-          { to: "/history", label: "Reading History" },
+          { to: "/history", label: "History" },
           { to: "/reviews", label: "Reviews" },
           { to: "/wishlist", label: "Wishlists" },
         ],
@@ -104,25 +102,24 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
       {
         group: "Collections",
         items: [
-          {
-            type: "group",
-            label: "Collection",
-            children: [
-              { to: "/collections", label: "Collections" },
-              { to: "/collectionbooks", label: "Collection Books" },
-            ],
-          },
+          { to: "/collections", label: "Collections" },
+          { to: "/collectionbooks", label: "Collection Books" },
         ],
       },
       {
         group: "Requests",
         items: [
           { to: "/bookmarks", label: "Bookmarks" },
-          { to: "/requests", label: "Book Requests" },
+          { to: "/requests", label: "Requests" },
         ],
       },
     ],
     [],
+  );
+
+  const flatNav = useMemo(
+    () => nav.flatMap((s) => s.items),
+    [nav],
   );
 
   const [openGroups, setOpenGroups] = useState(() => ({
@@ -338,60 +335,9 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
     </aside>
   );
 
-  const mobileDrawer = (
-    <>
-      {sidebarOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(15,23,42,0.3)",
-            zIndex: 99,
-          }}
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      <aside
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: 280,
-          background: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          boxShadow: "4px 0 24px rgba(15,23,42,0.15)",
-          zIndex: 100,
-          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform .2s ease",
-        }}
-      >
-        <div style={{ padding: "14px", textAlign: "right" }}>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            style={{
-              background: "transparent",
-              border: "none",
-              fontSize: 24,
-              cursor: "pointer",
-              color: "#64748b",
-              padding: "4px 8px",
-              fontFamily: "inherit",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-        {sidebarContent}
-      </aside>
-    </>
-  );
-
   return (
     <div className="adminRoot">
-      <Header hamburger={isMobile} onHamburgerClick={() => setSidebarOpen(true)} />
-      {isMobile && mobileDrawer}
+      <Header showSidebar={isMobile} sidebarNav={flatNav} pathname={pathname} />
       <div className={isMobile ? "" : "adminShell"}>
         {!isMobile && desktopSidebar}
         <div className="adminMain">
@@ -402,13 +348,9 @@ export default function AdminLayout({ pageTitle, pageSubtitle, children }) {
                 <div className="adminPageSubtitle">{pageSubtitle}</div>
               ) : null}
             </div>
-            {!isMobile && (
-              <div
-                style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}
-              >
-                {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
-              </div>
-            )}
+            <div style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14 }}>
+              {JSON.parse(localStorage.getItem("user"))?.emri || "Admin User"}
+            </div>
           </div>
           <div className="adminContent">{children}</div>
         </div>

@@ -12,11 +12,10 @@ export default function UserBookmarks() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ libri_id: "", faqja: "", shenime: "" });
   const [editing, setEditing] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
-    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
