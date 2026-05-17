@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import UserLayout from "../admin/UserLayout";
+import { showToast } from "../components/Toast";
 
 const borderColor = "rgba(15,23,42,0.10)";
 
@@ -17,6 +18,7 @@ export default function UserBookRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ titulli_librit: "", autori: "" });
 
   useEffect(() => {
@@ -35,16 +37,52 @@ export default function UserBookRequests() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.titulli_librit) return;
-    axios.post("http://localhost:5000/book-requests", {
-      perdoruesi_id: user.id, titulli_librit: form.titulli_librit, autori: form.autori, statusi: "Ne Pritje",
-    }).then(() => {
+    try {
+      if (editing) {
+        await axios.put(`http://localhost:5000/book-requests/${editing.id}`, {
+          titulli_librit: form.titulli_librit, autori: form.autori, statusi: editing.statusi,
+        });
+        showToast("Request updated.", "success");
+      } else {
+        await axios.post("http://localhost:5000/book-requests", {
+          perdoruesi_id: user.id, titulli_librit: form.titulli_librit, autori: form.autori, statusi: "Ne Pritje",
+        });
+        showToast("Request sent!", "success");
+      }
       setForm({ titulli_librit: "", autori: "" });
+      setEditing(null);
       setShowForm(false);
       refresh();
-    }).catch(() => alert("Gabim gjatë dërgimit të kërkesës!"));
+    } catch (err) {
+      showToast("Error saving request.", "error");
+    }
+  };
+
+  const startEdit = (r) => {
+    setEditing(r);
+    setForm({ titulli_librit: r.titulli_librit, autori: r.autori || "" });
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelForm = () => {
+    setForm({ titulli_librit: "", autori: "" });
+    setEditing(null);
+    setShowForm(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (!await window.confirm("Delete this request?")) return;
+    try {
+      await axios.delete(`http://localhost:5000/book-requests/${id}`);
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      showToast("Request deleted.", "success");
+    } catch (err) {
+      showToast("Error deleting request.", "error");
+    }
   };
 
   return (
@@ -53,19 +91,20 @@ export default function UserBookRequests() {
         <div style={{ padding: 40, textAlign: "center", color: "#64748b", fontWeight: 600 }}>Loading...</div>
       ) : (
         <>
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={() => setShowForm((p) => !p)}
-              style={{
-                padding: "12px 24px", borderRadius: 12, border: "none",
-                background: showForm ? "#f1f5f9" : "#2563eb",
-                color: showForm ? "#334155" : "#fff", fontWeight: 700, fontSize: 14,
-                cursor: "pointer", fontFamily: "inherit", transition: "all .12s ease",
-              }}
-            >
-              {showForm ? "Cancel" : "+ New Request"}
-            </button>
-          </div>
+          {!showForm && (
+            <div style={{ marginBottom: 20 }}>
+              <button
+                onClick={() => setShowForm(true)}
+                style={{
+                  padding: "12px 24px", borderRadius: 12, border: "none",
+                  background: "#2563eb", color: "#fff", fontWeight: 700, fontSize: 14,
+                  cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                + New Request
+              </button>
+            </div>
+          )}
 
           {showForm && (
             <form onSubmit={handleSubmit} style={{
@@ -80,13 +119,14 @@ export default function UserBookRequests() {
                 <label className="label">Author (optional)</label>
                 <input className="input" value={form.autori} onChange={(e) => setForm((p) => ({ ...p, autori: e.target.value }))} />
               </div>
-              <button type="submit" style={{
-                padding: "11px 24px", borderRadius: 12, border: "none",
-                background: "#2563eb", color: "#fff", fontWeight: 700, fontSize: 14,
-                cursor: "pointer", fontFamily: "inherit", alignSelf: "flex-start",
-              }}>
-                Send Request
-              </button>
+              <div className="btnRow" style={{ marginTop: 4 }}>
+                <button type="button" className="btn btnGhost" onClick={cancelForm}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btnAccent">
+                  {editing ? "Save Changes" : "Send Request"}
+                </button>
+              </div>
             </form>
           )}
 
@@ -103,11 +143,7 @@ export default function UserBookRequests() {
                   <div key={r.id} style={{
                     background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`,
                     borderLeft: `6px solid ${st.color}`, boxShadow: "0 8px 30px rgba(15,23,42,0.06)", padding: 24,
-                    transition: "transform .15s ease, box-shadow .15s ease",
-                  }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(15,23,42,0.10)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(15,23,42,0.06)"; }}
-                  >
+                  }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
                       <div>
                         <div style={{ fontWeight: 800, fontSize: 16, color: "#0f172a" }}>{r.titulli_librit}</div>
@@ -119,6 +155,10 @@ export default function UserBookRequests() {
                       }}>
                         {r.statusi}
                       </span>
+                    </div>
+                    <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
+                      <button type="button" className="btn btnGhost" onClick={() => startEdit(r)}>Edit</button>
+                      <button type="button" className="btn btnGhost" onClick={() => handleDelete(r.id)}>Delete</button>
                     </div>
                   </div>
                 );

@@ -37,7 +37,12 @@ app.get("/api/stats", (req, res) => {
 });
 
 app.get("/books", (req, res) => {
-  db.query("SELECT * FROM books", (err, result) => {
+  const sql = `
+    SELECT b.*, a.emri AS autor_emri, a.mbiemri AS autor_mbiemri
+    FROM books b
+    LEFT JOIN authors a ON b.autori_id = a.id
+  `;
+  db.query(sql, (err, result) => {
     if (err) return res.status(500).json(err);
     res.json(result);
   });

@@ -350,7 +350,7 @@ const AddBook = () => {
                         {b.titulli}
                       </div>
                       <div className="help">
-                        Author: {b.emri} {b.mbiemri}
+                        Author: {b.autor_emri || "Unknown"} {b.autor_mbiemri || ""}
                       </div>
                       <div className="help">ISBN: {b.isbn || "N/A"}</div>
                     </div>

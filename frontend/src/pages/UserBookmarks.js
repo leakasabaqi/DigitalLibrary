@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import UserLayout from "../admin/UserLayout";
+import { showToast } from "../components/Toast";
 
 const borderColor = "rgba(15,23,42,0.10)";
 
@@ -12,7 +13,8 @@ export default function UserBookmarks() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ libri_id: "", faqja: "", shenime: "" });
   const [editing, setEditing] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 980);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 980);
+  const [deleting, setDeleting] = useState(null);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -40,31 +42,53 @@ export default function UserBookmarks() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.libri_id) return;
     const payload = { ...form, perdoruesi_id: user.id };
-    if (editing) {
-      axios.put(`http://localhost:5000/bookmarks/${editing.id}`, payload).then(() => {
-        setEditing(null); setForm({ libri_id: "", faqja: "", shenime: "" }); setShowForm(false); refresh();
-      });
-    } else {
-      axios.post("http://localhost:5000/bookmarks", payload).then(() => {
-        setForm({ libri_id: "", faqja: "", shenime: "" }); setShowForm(false); refresh();
-      });
+    try {
+      if (editing) {
+        await axios.put(`http://localhost:5000/bookmarks/${editing.id}`, payload);
+        setEditing(null);
+        showToast("Bookmark updated.", "success");
+      } else {
+        await axios.post("http://localhost:5000/bookmarks", payload);
+        showToast("Bookmark saved.", "success");
+      }
+      setForm({ libri_id: "", faqja: "", shenime: "" });
+      setShowForm(false);
+      refresh();
+    } catch {
+      showToast("Error saving bookmark.", "error");
     }
   };
 
   const startEdit = (b) => {
-    setEditing(b); setForm({ libri_id: b.libri_id, faqja: b.faqja || "", shenime: b.shenime || "" }); setShowForm(true);
+    setEditing(b);
+    setForm({ libri_id: b.libri_id, faqja: b.faqja || "", shenime: b.shenime || "" });
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
+    if (deleting) return;
     if (!await window.confirm("Delete this bookmark?")) return;
-    axios.delete(`http://localhost:5000/bookmarks/${id}`).then(refresh);
+    setDeleting(id);
+    try {
+      await axios.delete(`http://localhost:5000/bookmarks/${id}`);
+      setBookmarks((prev) => prev.filter((b) => b.id !== id));
+      showToast("Bookmark deleted.", "success");
+    } catch {
+      showToast("Error deleting bookmark.", "error");
+    }
+    setDeleting(null);
   };
 
-  const bookName = (id) => { const b = books.find((b) => Number(b.id) === Number(id)); return b ? b.titulli : "Unknown"; };
+  const bookData = (id) => books.find((b) => Number(b.id) === Number(id));
+
+  const coverS = (id) => {
+    const b = bookData(id);
+    return b ? b.foto_kopertines : null;
+  };
 
   return (
     <UserLayout pageTitle="My Bookmarks" pageSubtitle="Save notes and page numbers from your books">
@@ -72,19 +96,20 @@ export default function UserBookmarks() {
         <div style={{ padding: 40, textAlign: "center", color: "#64748b", fontWeight: 600 }}>Loading...</div>
       ) : (
         <>
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={() => { setShowForm((p) => !p); if (!showForm) { setEditing(null); setForm({ libri_id: "", faqja: "", shenime: "" }); } }}
-              style={{
-                padding: "12px 24px", borderRadius: 12, border: "none",
-                background: showForm ? "#f1f5f9" : "#2563eb",
-                color: showForm ? "#334155" : "#fff", fontWeight: 700, fontSize: 14,
-                cursor: "pointer", fontFamily: "inherit", transition: "all .12s ease",
-              }}
-            >
-              {showForm ? "Cancel" : "+ New Bookmark"}
-            </button>
-          </div>
+          {!showForm && (
+            <div style={{ marginBottom: 20 }}>
+              <button
+                onClick={() => { setEditing(null); setForm({ libri_id: "", faqja: "", shenime: "" }); setShowForm(true); }}
+                style={{
+                  padding: "12px 24px", borderRadius: 12, border: "none",
+                  background: "#2563eb", color: "#fff", fontWeight: 700, fontSize: 14,
+                  cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                + New Bookmark
+              </button>
+            </div>
+          )}
 
           {showForm && (
             <form onSubmit={handleSubmit} style={{
@@ -108,13 +133,14 @@ export default function UserBookmarks() {
                 <label className="label">Note</label>
                 <textarea className="textarea" value={form.shenime} onChange={(e) => setForm((p) => ({ ...p, shenime: e.target.value }))} rows={3} placeholder="What did you want to remember?" required />
               </div>
-              <button type="submit" style={{
-                padding: "11px 24px", borderRadius: 12, border: "none",
-                background: "#2563eb", color: "#fff", fontWeight: 700, fontSize: 14,
-                cursor: "pointer", fontFamily: "inherit", alignSelf: "flex-start",
-              }}>
-                {editing ? "Update" : "Save"}
-              </button>
+              <div className="btnRow" style={{ marginTop: 4 }}>
+                <button type="button" className="btn btnGhost" onClick={() => { setShowForm(false); setEditing(null); setForm({ libri_id: "", faqja: "", shenime: "" }); }}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btnAccent">
+                  {editing ? "Update" : "Save"}
+                </button>
+              </div>
             </form>
           )}
 
@@ -125,35 +151,41 @@ export default function UserBookmarks() {
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? "280px" : "320px"}, 1fr))`, gap: 16 }}>
-              {bookmarks.map((b) => (
-                <div key={b.id} style={{
-                  background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`,
-                  borderLeft: "6px solid #2563eb", boxShadow: "0 8px 30px rgba(15,23,42,0.06)", padding: 24,
-                  display: "flex", flexDirection: "column",
-                  transition: "transform .15s ease, box-shadow .15s ease",
-                }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(15,23,42,0.10)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(15,23,42,0.06)"; }}
-                >
-                  <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a", marginBottom: 4 }}>{bookName(b.libri_id)}</div>
-                  {b.faqja && <div style={{ fontSize: 12, fontWeight: 700, color: "#2563eb", marginBottom: 10 }}>Page {b.faqja}</div>}
-                  <div style={{ color: "#475569", fontSize: 13, lineHeight: 1.6, marginBottom: 14, flex: 1 }}>
-                    {b.shenime}
+              {bookmarks.map((b) => {
+                const cover = coverS(b.libri_id);
+                return (
+                  <div key={b.id} style={{
+                    background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`,
+                    boxShadow: "0 8px 30px rgba(15,23,42,0.06)",
+                    display: "flex", gap: 16, overflow: "hidden", alignItems: "center",
+                    transition: "transform .15s ease, box-shadow .15s ease",
+                  }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(15,23,42,0.10)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(15,23,42,0.06)"; }}
+                  >
+                    {cover ? (
+                      <div style={{ width: 90, height: 130, flexShrink: 0, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 8, marginLeft: 16 }}>
+                        <img src={cover} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 4 }} />
+                      </div>
+                    ) : (
+                      <div style={{ width: 90, height: 130, background: "#f1f5f9", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 600, fontSize: 11 }}>No<br/>cover</div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0, padding: "16px 16px 16px 0", display: "flex", flexDirection: "column" }}>
+                      <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a", marginBottom: 2 }}>{bookData(b.libri_id)?.titulli || "Unknown"}</div>
+                      {b.faqja && <div style={{ fontSize: 12, fontWeight: 700, color: "#2563eb", marginBottom: 8 }}>Page {b.faqja}</div>}
+                      <div style={{ color: "#475569", fontSize: 13, lineHeight: 1.6, flex: 1, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {b.shenime}
+                      </div>
+                      <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                        <button type="button" className="btn btnGhost" onClick={() => startEdit(b)}>Edit</button>
+                        <button type="button" className="btn btnGhost" onClick={() => handleDelete(b.id)} disabled={deleting === b.id}>
+                          {deleting === b.id ? "..." : "Delete"}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
-                    <button onClick={() => startEdit(b)} style={{
-                      padding: "8px 14px", borderRadius: 10, border: `1px solid ${borderColor}`,
-                      background: "transparent", color: "#2563eb", fontWeight: 700, fontSize: 12,
-                      cursor: "pointer", fontFamily: "inherit",
-                    }}>Edit</button>
-                    <button onClick={() => handleDelete(b.id)} style={{
-                      padding: "8px 14px", borderRadius: 10, border: `1px solid ${borderColor}`,
-                      background: "transparent", color: "#dc2626", fontWeight: 700, fontSize: 12,
-                      cursor: "pointer", fontFamily: "inherit",
-                    }}>Delete</button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
@@ -161,3 +193,4 @@ export default function UserBookmarks() {
     </UserLayout>
   );
 }
+

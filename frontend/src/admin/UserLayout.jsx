@@ -63,6 +63,7 @@ export default function UserLayout({ pageTitle, pageSubtitle, children }) {
     { to: "/user-collections", label: "Collections" },
     { to: "/user-bookmarks", label: "Bookmarks" },
     { to: "/user-book-requests", label: "Book Requests" },
+    { to: "/user-reviews", label: "Reviews" },
     { to: "/user-subscriptions", label: "Subscriptions" },
   ];
 

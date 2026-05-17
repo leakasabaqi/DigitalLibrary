@@ -338,6 +338,7 @@ import UserWishlist from "./pages/UserWishlist";
 import UserBookmarks from "./pages/UserBookmarks";
 import UserBookRequests from "./pages/UserBookRequests";
 import UserSubscriptions from "./pages/UserSubscriptions";
+import UserReviews from "./pages/UserReviews";
 import Wishlists from "./pages/Wishlists";
 import Collections from "./pages/Collections";
 import CollectionBooks from "./pages/CollectionBooks";
@@ -561,6 +562,15 @@ function App() {
           element={
             <UserRoute>
               <UserBookRequests />
+            </UserRoute>
+          }
+        />
+
+        <Route
+          path="/user-reviews"
+          element={
+            <UserRoute>
+              <UserReviews />
             </UserRoute>
           }
         />

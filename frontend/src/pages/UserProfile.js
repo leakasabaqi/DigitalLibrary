@@ -278,30 +278,40 @@ export default function UserProfile() {
               <div style={bookGridStyle}>
                 {currentlyReading.map((book) => (
                   <div key={book.id} style={bookCardStyle}>
-                    <div
-                      style={{
-                        width: "100%",
-                        height: 200,
-                        background: "var(--accent)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        fontSize: "0.8rem",
-                        textAlign: "center",
-                        padding: 8,
-                      }}
-                    >
-                      {book.title || "No Image"}
-                    </div>
+                    {book.foto_kopertines ? (
+                      <div style={{ lineHeight: 0, fontSize: 0 }}>
+                        <img
+                          src={book.foto_kopertines}
+                          alt={book.titulli}
+                          style={{
+                            width: "100%",
+                            height: 200,
+                            objectFit: "cover",
+                            background: "#f1f5f9",
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: 200,
+                          background: "var(--accent)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "white",
+                          fontSize: "0.8rem",
+                          textAlign: "center",
+                          padding: 8,
+                        }}
+                      >
+                        No Image
+                      </div>
+                    )}
                     <div style={{ padding: 12 }}>
                       <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                        {book.title}
-                      </div>
-                      <div
-                        style={{ fontSize: "0.8rem", color: "var(--muted)" }}
-                      >
-                        {book.author}
+                        {book.titulli || "Unknown"}
                       </div>
                     </div>
                   </div>
@@ -373,30 +383,40 @@ export default function UserProfile() {
               <div style={bookGridStyle}>
                 {wishlist.map((book) => (
                   <div key={book.id} style={bookCardStyle}>
-                    <div
-                      style={{
-                        width: "100%",
-                        height: 200,
-                        background: "var(--accent)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        fontSize: "0.8rem",
-                        textAlign: "center",
-                        padding: 8,
-                      }}
-                    >
-                      {book.title || "No Image"}
-                    </div>
+                    {book.foto_kopertines ? (
+                      <div style={{ lineHeight: 0, fontSize: 0 }}>
+                        <img
+                          src={book.foto_kopertines}
+                          alt={book.titulli}
+                          style={{
+                            width: "100%",
+                            height: 200,
+                            objectFit: "cover",
+                            background: "#f1f5f9",
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: 200,
+                          background: "var(--accent)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "white",
+                          fontSize: "0.8rem",
+                          textAlign: "center",
+                          padding: 8,
+                        }}
+                      >
+                        No Image
+                      </div>
+                    )}
                     <div style={{ padding: 12 }}>
                       <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                        {book.title}
-                      </div>
-                      <div
-                        style={{ fontSize: "0.8rem", color: "var(--muted)" }}
-                      >
-                        {book.author}
+                        {book.titulli || "Unknown"}
                       </div>
                     </div>
                   </div>
@@ -459,45 +479,7 @@ export default function UserProfile() {
             )}
           </div>
 
-          {/* Reading History Section */}
-          <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>Reading History</h2>
-            {readingHistory.length > 0 ? (
-              <div
-                style={{
-                  display: "grid",
-                  gap: 12,
-                }}
-              >
-                {readingHistory.map((record) => (
-                  <div
-                    key={record.id}
-                    style={{
-                      padding: 12,
-                      background: "var(--bg)",
-                      borderRadius: "var(--radius-sm)",
-                      border: "1px solid var(--border)",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 600 }}>{record.bookTitle}</div>
-                      <div
-                        style={{ fontSize: "0.85rem", color: "var(--muted)" }}
-                      >
-                        Read on:{" "}
-                        {new Date(record.readDate).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ color: "var(--muted)" }}>No reading history yet.</p>
-            )}
-          </div>
+
         </div>
       )}
 
