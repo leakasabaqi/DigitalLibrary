@@ -75,7 +75,7 @@ const AddPlan = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("A dëshiron ta fshish planin?")) {
+    if (await window.confirm("A dëshiron ta fshish planin?")) {
       try {
         await axios.delete(`http://localhost:5000/plans/${id}`);
         fetchPlans();

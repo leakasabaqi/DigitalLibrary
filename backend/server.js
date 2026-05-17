@@ -858,6 +858,46 @@ app.delete("/book-requests/:id", (req, res) => {
   );
 });
 
+// Payment endpoint
+app.post("/api/payments", (req, res) => {
+  const { perdoruesi_id, plani_id, cmimi_mujor, card_number, expiry, cvv, cardholder_name } = req.body;
+
+  if (!perdoruesi_id || !plani_id) {
+    return res.status(400).json("Missing required fields");
+  }
+
+  if (!card_number || !expiry || !cvv || !cardholder_name) {
+    return res.status(400).json("Card details are required");
+  }
+
+  const startDate = new Date().toISOString().split("T")[0];
+  const endDate = new Date();
+  endDate.setMonth(endDate.getMonth() + 1);
+  const dataSkadimit = endDate.toISOString().split("T")[0];
+
+  const sql =
+    "INSERT INTO subscriptions (perdoruesi_id, plani_id, data_fillimit, data_skadimit, statusi, pagesa_automatike) VALUES (?, ?, ?, ?, ?, ?)";
+
+  db.query(
+    sql,
+    [perdoruesi_id, plani_id, startDate, dataSkadimit, "aktiv", 1],
+    (err, result) => {
+      if (err) return res.status(500).json(err.sqlMessage);
+
+      const subId = result.insertId;
+      const selectSql = `SELECT s.*, p.emertimi AS plani_emri 
+                         FROM subscriptions s 
+                         JOIN plans p ON s.plani_id = p.id 
+                         WHERE s.id = ?`;
+
+      db.query(selectSql, [subId], (err2, subResult) => {
+        if (err2) return res.status(500).json(err2);
+        res.json(subResult[0]);
+      });
+    },
+  );
+});
+
 const authorRoutes = require("./authorRoutes");
 app.use("/", authorRoutes);
 

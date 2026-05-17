@@ -198,7 +198,7 @@ const Collections = () => {
                     className="btn btnGhost"
                     onClick={async () => {
                       if (
-                        window.confirm("A dëshironi ta fshini këtë koleksion?")
+                        await window.confirm("A dëshironi ta fshini këtë koleksion?")
                       ) {
                         await axios.delete(
                           `http://localhost:5000/collections/${c.id}`,

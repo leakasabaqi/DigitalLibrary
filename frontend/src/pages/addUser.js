@@ -75,7 +75,7 @@ const AddUser = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("A je i sigurt?")) {
+    if (await window.confirm("A je i sigurt?")) {
       try {
         await axios.delete(`http://localhost:5000/users/${id}`);
         fetchUsers();

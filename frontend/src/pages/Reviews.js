@@ -290,7 +290,7 @@ const Reviews = () => {
                       type="button"
                       className="btn btnGhost"
                       onClick={async () => {
-                        if (window.confirm("Delete this review?")) {
+                        if (await window.confirm("Delete this review?")) {
                           await axios.delete(
                             `http://localhost:5000/reviews/${r.id}`,
                           );

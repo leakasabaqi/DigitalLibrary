@@ -58,8 +58,8 @@ export default function UserCollections() {
     setShowForm(true);
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("Delete this collection?")) return;
+  const handleDelete = async (id) => {
+    if (!await window.confirm("Delete this collection?")) return;
     axios.delete(`http://localhost:5000/collections/${id}`).then(refresh);
   };
 

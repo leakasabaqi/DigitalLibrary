@@ -322,6 +322,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import AdminLayout from "./admin/AdminLayout";
+import ToastContainer, { showToast, showConfirm } from "./components/Toast";
 
 import AddAuthor from "./pages/addAuthor";
 import AddBook from "./pages/addBook";
@@ -467,6 +468,9 @@ const DashboardHome = ({ books }) => {
   );
 };
 
+window.alert = (msg) => showToast(msg, "info");
+window.confirm = (msg) => showConfirm(msg);
+
 function App() {
   const [books, setBooks] = useState([]);
 
@@ -479,6 +483,7 @@ function App() {
 
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         {/* Rruget publike */}
         <Route path="/login" element={<Login />} />

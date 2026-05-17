@@ -69,7 +69,7 @@ const AddAuthor = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("A dëshiron ta fshish autorin?")) {
+    if (await window.confirm("A dëshiron ta fshish autorin?")) {
       try {
         await axios.delete(`http://localhost:5000/authors/${id}`);
         fetchAuthors();

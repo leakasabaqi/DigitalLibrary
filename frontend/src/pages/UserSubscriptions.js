@@ -1,13 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import UserLayout from "../admin/UserLayout";
+import { showToast } from "../components/Toast";
 
 const accent = "#2563eb";
-
-function getToday() {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
-}
 
 function getDaysLeft(expiry) {
   if (!expiry) return null;
@@ -26,13 +22,33 @@ function formatDate(dateStr) {
   });
 }
 
+function formatCardNumber(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 16);
+  return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+function formatExpiry(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 4);
+  if (digits.length >= 3) {
+    return digits.slice(0, 2) + " / " + digits.slice(2);
+  }
+  return digits;
+}
+
 export default function UserSubscriptions() {
   const userRef = useRef(JSON.parse(localStorage.getItem("user")));
   const user = userRef.current;
   const [plans, setPlans] = useState([]);
   const [mySub, setMySub] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [subscribing, setSubscribing] = useState(null);
+  const [paying, setPaying] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [cardName, setCardName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -50,35 +66,44 @@ export default function UserSubscriptions() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSubscribe = async (plan) => {
-    if (!window.confirm(`Subscribe to "${plan.emertimi}" for €${plan.cmimi_mujor}/month?`)) return;
-    setSubscribing(plan.id);
+  const openPayment = (plan) => {
+    setSelectedPlan(plan);
+    setCardName("");
+    setCardNumber("");
+    setCardExpiry("");
+    setCardCvv("");
+    setShowModal(true);
+  };
+
+  const handlePay = async () => {
+    if (!cardName.trim() || cardNumber.replace(/\s/g, "").length < 13 || cardExpiry.replace(/\s/g, "").length < 4 || cardCvv.length < 3) {
+      showToast("Please fill in all card details correctly.", "error");
+      return;
+    }
+    if (!await window.confirm(`Confirm payment of €${selectedPlan.cmimi_mujor} for "${selectedPlan.emertimi}"?`)) return;
+    setPaying(true);
     try {
-      const startDate = getToday();
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1);
-      const expiry = endDate.toISOString().split("T")[0];
-
-      const res = await axios.post("http://localhost:5000/subscriptions", {
+      const res = await axios.post("http://localhost:5000/api/payments", {
         perdoruesi_id: user.id,
-        plani_id: plan.id,
-        data_fillimit: startDate,
-        data_skadimit: expiry,
-        statusi: "aktiv",
-        pagesa_automatike: 0,
+        plani_id: selectedPlan.id,
+        cmimi_mujor: selectedPlan.cmimi_mujor,
+        card_number: cardNumber.replace(/\s/g, ""),
+        expiry: cardExpiry.replace(/\s/g, ""),
+        cvv: cardCvv,
+        cardholder_name: cardName,
       });
-
       setMySub(res.data);
-      alert(`Successfully subscribed to "${plan.emertimi}"!`);
+      setShowModal(false);
+      showToast(`Payment successful! You are now subscribed to "${selectedPlan.emertimi}".`, "success");
     } catch (err) {
-      alert("Subscription failed: " + (err.response?.data || "Server error"));
+      showToast("Payment failed: " + (err.response?.data || "Server error"), "error");
     } finally {
-      setSubscribing(null);
+      setPaying(false);
     }
   };
 
   const handleCancel = async () => {
-    if (!window.confirm("Cancel your current subscription?")) return;
+    if (!await window.confirm("Cancel your current subscription?")) return;
     try {
       await axios.delete(`http://localhost:5000/subscriptions/${mySub.id}`);
       setMySub(null);
@@ -89,6 +114,9 @@ export default function UserSubscriptions() {
   };
 
   const isSubscribedTo = (planId) => mySub && Number(mySub.plani_id) === Number(planId);
+
+  const lastFour = cardNumber.replace(/\s/g, "").slice(-4) || "••••";
+  const displayBrand = cardNumber.startsWith("4") ? "VISA" : cardNumber.startsWith("5") ? "MASTERCARD" : "";
 
   return (
     <UserLayout
@@ -143,10 +171,7 @@ export default function UserSubscriptions() {
                     fontSize: 13,
                     cursor: "pointer",
                     fontFamily: "inherit",
-                    transition: "background .12s ease",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
                 >
                   Cancel Subscription
                 </button>
@@ -187,9 +212,7 @@ export default function UserSubscriptions() {
                           : isPopular
                           ? "0 8px 30px rgba(37,99,235,0.12)"
                           : "0 4px 16px rgba(15,23,42,0.06)",
-                        transition: "transform .15s ease, box-shadow .15s ease",
                       }}
-
                     >
                       {isPopular && !owned && (
                         <div
@@ -294,7 +317,7 @@ export default function UserSubscriptions() {
                               width: "100%",
                               textAlign: "center",
                               background: "rgba(37,99,235,0.08)",
-                              border: `1px solid rgba(37,99,235,0.2)`,
+                              border: "1px solid rgba(37,99,235,0.2)",
                               color: accent,
                               borderRadius: 10,
                               padding: "12px 0",
@@ -308,27 +331,23 @@ export default function UserSubscriptions() {
                         ) : (
                           <button
                             type="button"
-                            disabled={subscribing === plan.id}
-                            onClick={() => handleSubscribe(plan)}
+                            onClick={() => openPayment(plan)}
                             style={{
                               width: "100%",
                               background: isPopular ? accent : "#fff",
                               border: isPopular
-                                ? `1px solid ${accent}`
+                                ? "1px solid " + accent
                                 : "1px solid rgba(15,23,42,0.18)",
                               color: isPopular ? "#fff" : "#0f172a",
                               borderRadius: 10,
                               padding: "12px 0",
                               fontWeight: 700,
                               fontSize: 14,
-                              cursor: subscribing === plan.id ? "not-allowed" : "pointer",
+                              cursor: "pointer",
                               fontFamily: "inherit",
-                              transition: "all .12s ease",
-                              opacity: subscribing === plan.id ? 0.6 : 1,
                             }}
-
                           >
-                            {subscribing === plan.id ? "Subscribing..." : "Subscribe"}
+                            Subscribe
                           </button>
                         )}
                       </div>
@@ -340,6 +359,219 @@ export default function UserSubscriptions() {
           </>
         )}
       </div>
+
+      {/* Payment Modal */}
+      {showModal && selectedPlan && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999,
+            padding: 16,
+          }}
+          onClick={() => !paying && setShowModal(false)}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 20,
+              width: "100%",
+              maxWidth: 440,
+              padding: "28px 24px 24px",
+              boxShadow: "0 20px 60px rgba(15,23,42,0.2)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
+                  Complete Payment
+                </div>
+                <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>
+                  {selectedPlan.emertimi} &middot; €{selectedPlan.cmimi_mujor}/month
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => !paying && setShowModal(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: 22,
+                  cursor: paying ? "not-allowed" : "pointer",
+                  color: "#94a3b8",
+                  fontFamily: "inherit",
+                  padding: "4px 8px",
+                  lineHeight: 1,
+                }}
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Card Preview */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, #1e293b, #334155)",
+                borderRadius: 14,
+                padding: "20px 24px",
+                marginBottom: 24,
+                color: "#fff",
+                minHeight: 140,
+                position: "relative",
+                fontFamily: "'Courier New', monospace",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+                <div style={{ fontSize: 11, opacity: 0.6, fontWeight: 600, letterSpacing: "0.06em" }}>
+                  {displayBrand || "BANK CARD"}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 700, opacity: 0.8 }}>{displayBrand === "VISA" ? "V" : displayBrand === "MASTERCARD" ? "MC" : "☰"}</div>
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 20, wordSpacing: 8 }}>
+                {cardNumber ? cardNumber : "••••  ••••  ••••  ••••"}
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                <div>
+                  <div style={{ fontSize: 9, opacity: 0.5, textTransform: "uppercase", marginBottom: 2 }}>Cardholder</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, minHeight: 18 }}>
+                    {cardName.toUpperCase() || "YOUR NAME"}
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 9, opacity: 0.5, textTransform: "uppercase", marginBottom: 2 }}>Expires</div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{cardExpiry || "MM / YY"}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card Form */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#334155", marginBottom: 4, display: "block" }}>Cardholder Name</label>
+                <input
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                  placeholder="John Doe"
+                  style={{
+                    width: "100%",
+                    padding: "11px 12px",
+                    borderRadius: 10,
+                    border: "1px solid rgba(15,23,42,0.18)",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#334155", marginBottom: 4, display: "block" }}>Card Number</label>
+                <input
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                  placeholder="4242 4242 4242 4242"
+                  inputMode="numeric"
+                  style={{
+                    width: "100%",
+                    padding: "11px 12px",
+                    borderRadius: 10,
+                    border: "1px solid rgba(15,23,42,0.18)",
+                    fontSize: 14,
+                    fontFamily: "'Courier New', monospace",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#334155", marginBottom: 4, display: "block" }}>Expiry (MM/YY)</label>
+                  <input
+                    value={cardExpiry}
+                    onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
+                    placeholder="MM / YY"
+                    inputMode="numeric"
+                    style={{
+                      width: "100%",
+                      padding: "11px 12px",
+                      borderRadius: 10,
+                      border: "1px solid rgba(15,23,42,0.18)",
+                      fontSize: 14,
+                      fontFamily: "inherit",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#334155", marginBottom: 4, display: "block" }}>CVV</label>
+                  <input
+                    value={cardCvv}
+                    onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                    placeholder="•••"
+                    inputMode="numeric"
+                    type="password"
+                    style={{
+                      width: "100%",
+                      padding: "11px 12px",
+                      borderRadius: 10,
+                      border: "1px solid rgba(15,23,42,0.18)",
+                      fontSize: 14,
+                      fontFamily: "inherit",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
+              <button
+                type="button"
+                onClick={() => !paying && setShowModal(false)}
+                disabled={paying}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "1px solid rgba(15,23,42,0.18)",
+                  borderRadius: 10,
+                  padding: "12px 0",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: paying ? "not-allowed" : "pointer",
+                  fontFamily: "inherit",
+                  color: "#334155",
+                  opacity: paying ? 0.5 : 1,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handlePay}
+                disabled={paying}
+                style={{
+                  flex: 2,
+                  background: accent,
+                  border: "none",
+                  borderRadius: 10,
+                  padding: "12px 0",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: paying ? "not-allowed" : "pointer",
+                  fontFamily: "inherit",
+                  color: "#fff",
+                  opacity: paying ? 0.6 : 1,
+                }}
+              >
+                {paying ? "Processing..." : `Pay €${selectedPlan.cmimi_mujor}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </UserLayout>
   );
 }

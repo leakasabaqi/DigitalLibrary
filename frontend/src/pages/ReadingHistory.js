@@ -322,7 +322,7 @@ const ReadingHistory = () => {
                         type="button"
                         className="btn btnGhost"
                         onClick={async () => {
-                          if (window.confirm("A jeni i sigurt?")) {
+                          if (await window.confirm("A jeni i sigurt?")) {
                             await axios.delete(
                               `http://localhost:5000/reading-history/${h.id}`,
                             );

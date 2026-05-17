@@ -175,7 +175,7 @@ const Wishlists = () => {
                     type="button"
                     className="btn btnGhost"
                     onClick={async () => {
-                      if (window.confirm("Fshije?")) {
+                      if (await window.confirm("Fshije?")) {
                         await axios.delete(
                           `http://localhost:5000/wishlists/${w.id}`,
                         );

@@ -66,7 +66,7 @@ const AddCategory = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("A dëshiron ta fshish kategorinë?")) {
+    if (await window.confirm("A dëshiron ta fshish kategorinë?")) {
       try {
         await axios.delete(`http://localhost:5000/categories/${id}`);
         fetchCategories();

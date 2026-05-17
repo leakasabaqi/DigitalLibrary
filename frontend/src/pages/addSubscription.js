@@ -54,7 +54,7 @@ const AddSubscription = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("A jeni të sigurt që dëshironi ta fshini këtë abonim?"))
+    if (!await window.confirm("A jeni të sigurt që dëshironi ta fshini këtë abonim?"))
       return;
     try {
       await axios.delete(`http://localhost:5000/subscriptions/${id}`);

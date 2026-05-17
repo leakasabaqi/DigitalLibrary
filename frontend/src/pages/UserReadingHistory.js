@@ -111,8 +111,8 @@ export default function UserReadingHistory() {
       .catch(() => alert("Gabim gjatë përditësimit!"));
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("A jeni i sigurt që doni të fshini këtë histori leximi?"))
+  const handleDelete = async (id) => {
+    if (!await window.confirm("A jeni i sigurt që doni të fshini këtë histori leximi?"))
       return;
     axios
       .delete("http://localhost:5000/reading-history/" + id)

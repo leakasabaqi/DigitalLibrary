@@ -194,7 +194,7 @@ const CollectionBooks = () => {
                           className="btn btnGhost"
                           onClick={async () => {
                             if (
-                              window.confirm(
+                              await window.confirm(
                                 "A jeni të sigurt që dëshironi ta hiqni këtë libër nga koleksioni?",
                               )
                             ) {

@@ -59,8 +59,8 @@ export default function UserBookmarks() {
     setEditing(b); setForm({ libri_id: b.libri_id, faqja: b.faqja || "", shenime: b.shenime || "" }); setShowForm(true);
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("Delete this bookmark?")) return;
+  const handleDelete = async (id) => {
+    if (!await window.confirm("Delete this bookmark?")) return;
     axios.delete(`http://localhost:5000/bookmarks/${id}`).then(refresh);
   };
 

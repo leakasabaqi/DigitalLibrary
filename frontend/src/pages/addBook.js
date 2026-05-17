@@ -101,7 +101,7 @@ const AddBook = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("A dëshiron ta fshish librin?")) {
+    if (await window.confirm("A dëshiron ta fshish librin?")) {
       try {
         await axios.delete(`http://localhost:5000/books/${id}`);
         fetchBooks();

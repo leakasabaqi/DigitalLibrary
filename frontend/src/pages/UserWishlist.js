@@ -34,10 +34,10 @@ export default function UserWishlist() {
   const inWishlist = (bookId) =>
     wishlist.some((w) => Number(w.libri_id) === Number(bookId));
 
-  const toggleWishlist = (book) => {
+  const toggleWishlist = async (book) => {
     const existing = wishlist.find((w) => Number(w.libri_id) === Number(book.id));
     if (existing) {
-      if (window.confirm(`Remove "${book.titulli}" from your wishlist?`)) {
+      if (await window.confirm(`Remove "${book.titulli}" from your wishlist?`)) {
         axios.delete(`http://localhost:5000/wishlists/${existing.id}`).then(() => {
           setWishlist((prev) => prev.filter((w) => w.id !== existing.id));
         });

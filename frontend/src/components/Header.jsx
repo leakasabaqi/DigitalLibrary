@@ -51,25 +51,6 @@ export default function Header({ showSidebar, sidebarNav, pathname, brandLink, h
       >
         Browse
       </Link>
-      <Link
-        to="/user-subscriptions"
-        style={{
-          ...mobileBtn,
-          padding: mobileBtn.padding || "10px 16px",
-          borderRadius: mobileBtn.borderRadius || 12,
-          fontWeight: 700,
-          textDecoration: "none",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: mobileBtn.minHeight || 44,
-          background: "transparent",
-          color: "#0f172a",
-          border: "none",
-        }}
-      >
-        Plans
-      </Link>
       {user.roli === "admin" ? (
         <Link
           to="/admin"
