@@ -254,7 +254,7 @@ function Sidebar({ pathname }) {
   );
 }
 
-function CategoryGrid() {
+function CategoryGrid({ onSelect }) {
   const accent = "#2563eb";
   const surface = "#ffffff";
   const border = "rgba(15,23,42,0.10)";
@@ -321,6 +321,7 @@ function CategoryGrid() {
         return (
           <div
             key={cat.id}
+            onClick={() => onSelect?.(cat)}
             style={{
               padding: 24,
               borderRadius: 18,
@@ -328,7 +329,7 @@ function CategoryGrid() {
               border: `1px solid ${border}`,
               boxShadow: "0 8px 30px rgba(15, 23, 42, 0.06)",
               transition: "transform .15s ease, box-shadow .15s ease",
-              cursor: "default",
+              cursor: "pointer",
               display: "flex",
               flexDirection: "column",
             }}
@@ -463,6 +464,9 @@ function PublicBrowse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryBooks, setCategoryBooks] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -487,6 +491,54 @@ function PublicBrowse() {
       setSearchResults([]);
     }
     setSearching(false);
+  };
+
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    setCategoryLoading(true);
+    fetch(`http://localhost:5000/books/category/${cat.id}`)
+      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
+      .then((data) => {
+        setCategoryBooks(Array.isArray(data) ? data : []);
+        setCategoryLoading(false);
+      })
+      .catch((err) => {
+        console.error("Category books fetch error:", err);
+        setCategoryBooks([]);
+        setCategoryLoading(false);
+      });
+  };
+
+  const content = () => {
+    if (searchQuery.trim()) {
+      return <BookResults books={searchResults} loading={searching} />;
+    }
+    if (selectedCategory) {
+      return (
+        <>
+          <div style={{ marginBottom: 24, background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`, padding: 24 }}>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              style={{
+                padding: "8px 16px", borderRadius: 10, border: "none",
+                background: "#f1f5f9", color: "#334155", fontWeight: 700, fontSize: 13,
+                cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 14,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              Back to categories
+            </button>
+            <div style={{ fontWeight: 800, fontSize: 18, color: "#0f172a", marginBottom: 4 }}>{selectedCategory.emertimi}</div>
+            {selectedCategory.pershkrimi && (
+              <div style={{ color: "#475569", fontSize: 13, lineHeight: 1.7, marginBottom: 8 }}>{selectedCategory.pershkrimi}</div>
+            )}
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{categoryBooks.length} {categoryBooks.length === 1 ? "book" : "books"}</div>
+          </div>
+          <BookResults books={categoryBooks} loading={categoryLoading} />
+        </>
+      );
+    }
+    return <CategoryGrid onSelect={handleCategorySelect} />;
   };
 
   return (
@@ -533,11 +585,7 @@ function PublicBrowse() {
           <SearchBar onSearch={handleSearch} searching={searching} />
         </div>
 
-        {searchQuery.trim() ? (
-          <BookResults books={searchResults} loading={searching} />
-        ) : (
-          <CategoryGrid />
-        )}
+        {content()}
       </div>
     </div>
   );
@@ -551,6 +599,9 @@ function LoggedInBrowse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryBooks, setCategoryBooks] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -577,6 +628,22 @@ function LoggedInBrowse() {
     setSearching(false);
   };
 
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    setCategoryLoading(true);
+    fetch(`http://localhost:5000/books/category/${cat.id}`)
+      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
+      .then((data) => {
+        setCategoryBooks(Array.isArray(data) ? data : []);
+        setCategoryLoading(false);
+      })
+      .catch((err) => {
+        console.error("Category books fetch error:", err);
+        setCategoryBooks([]);
+        setCategoryLoading(false);
+      });
+  };
+
   const sidebarNav = [
     { to: "/user-profile", label: "My Profile" },
     { to: "/user-wishlist", label: "My Wishlist" },
@@ -585,6 +652,38 @@ function LoggedInBrowse() {
     { to: "/user-bookmarks", label: "Bookmarks" },
     { to: "/user-book-requests", label: "Book Requests" },
   ];
+
+  const content = () => {
+    if (searchQuery.trim()) {
+      return <BookResults books={searchResults} loading={searching} />;
+    }
+    if (selectedCategory) {
+      return (
+        <>
+          <div style={{ marginBottom: 24, background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`, padding: 24 }}>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              style={{
+                padding: "8px 16px", borderRadius: 10, border: "none",
+                background: "#f1f5f9", color: "#334155", fontWeight: 700, fontSize: 13,
+                cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 14,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              Back to categories
+            </button>
+            <div style={{ fontWeight: 800, fontSize: 18, color: "#0f172a", marginBottom: 4 }}>{selectedCategory.emertimi}</div>
+            {selectedCategory.pershkrimi && (
+              <div style={{ color: "#475569", fontSize: 13, lineHeight: 1.7, marginBottom: 8 }}>{selectedCategory.pershkrimi}</div>
+            )}
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{categoryBooks.length} {categoryBooks.length === 1 ? "book" : "books"}</div>
+          </div>
+          <BookResults books={categoryBooks} loading={categoryLoading} />
+        </>
+      );
+    }
+    return <CategoryGrid onSelect={handleCategorySelect} />;
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#f6f7fb" }}>
@@ -633,11 +732,7 @@ function LoggedInBrowse() {
           </div>
 
           <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-            {searchQuery.trim() ? (
-              <BookResults books={searchResults} loading={searching} />
-            ) : (
-              <CategoryGrid />
-            )}
+            {content()}
           </div>
         </div>
       </div>

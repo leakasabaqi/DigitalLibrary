@@ -63,6 +63,22 @@ app.get("/books/search", (req, res) => {
   });
 });
 
+app.get("/books/category/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = `
+    SELECT b.*, a.emri AS autor_emri, a.mbiemri AS autor_mbiemri
+    FROM books b
+    LEFT JOIN authors a ON b.autori_id = a.id
+    WHERE b.kategoria_id = ? OR b.kategoria_id IN (
+      SELECT id FROM categories WHERE kategoria_prind_id = ?
+    )
+  `;
+  db.query(sql, [id, id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
 app.post("/books", (req, res) => {
   const {
     titulli,
