@@ -1,8 +1,64 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Header from "../components/Header";
 
 const borderColor = "rgba(15,23,42,0.10)";
+
+function SearchBar({ onSearch, searching }) {
+  const [query, setQuery] = useState("");
+  const timer = useRef(null);
+  const cb = useRef(onSearch);
+  cb.current = onSearch;
+
+  useEffect(() => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      cb.current(query);
+    }, 300);
+    return () => { if (timer.current) clearTimeout(timer.current); };
+  }, [query]);
+
+  return (
+    <div
+      style={{
+        maxWidth: 560,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        background: "#fff",
+        border: `1px solid ${borderColor}`,
+        borderRadius: 14,
+        padding: "8px 16px",
+        boxShadow: "0 4px 16px rgba(15,23,42,0.06)",
+        transition: "border-color .15s ease",
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#2563eb"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = borderColor; }}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+      </svg>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search by book title or author"
+        style={{
+          flex: 1,
+          border: "none",
+          outline: "none",
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#0f172a",
+          background: "transparent",
+          fontFamily: "inherit",
+        }}
+      />
+      {query && searching && (
+        <span style={{ fontSize: 12, color: "#94a3b8" }}>Searching...</span>
+      )}
+    </div>
+  );
+}
 
 function normalizePathname(pathname) {
   if (!pathname || pathname === "/") return "/";
@@ -365,8 +421,48 @@ function CategoryGrid() {
   );
 }
 
+function BookResults({ books, loading }) {
+  if (loading) {
+    return <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b", fontWeight: 600 }}>Searching...</div>;
+  }
+  if (books.length === 0) {
+    return <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b", fontWeight: 600 }}>No books found.</div>;
+  }
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
+      {books.map((b) => (
+        <div key={b.id} style={{
+          background: "#fff", borderRadius: 12, border: `1px solid ${borderColor}`,
+          boxShadow: "0 4px 16px rgba(15,23,42,0.06)", overflow: "hidden",
+          display: "flex", flexDirection: "column",
+          transition: "transform .15s ease, box-shadow .15s ease",
+        }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(15,23,42,0.10)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.06)"; }}
+        >
+          {b.foto_kopertines ? (
+            <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+              <img src={b.foto_kopertines} alt={b.titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
+          ) : (
+            <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 700, fontSize: 13 }}>No Cover</div>
+          )}
+          <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{b.titulli}</div>
+            {b.autor_emri && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{b.autor_emri} {b.autor_mbiemri}</div>}
+            {b.isbn && <div style={{ fontSize: 11, color: "#94a3b8" }}>ISBN: {b.isbn}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PublicBrowse() {
   const [isMobile, setIsMobile] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -374,6 +470,24 @@ function PublicBrowse() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  const handleSearch = async (q) => {
+    setSearchQuery(q);
+    if (!q.trim()) {
+      setSearchResults([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    try {
+      const res = await fetch(`http://localhost:5000/books/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      setSearchResults(Array.isArray(data) ? data : []);
+    } catch {
+      setSearchResults([]);
+    }
+    setSearching(false);
+  };
 
   return (
     <div
@@ -407,7 +521,7 @@ function PublicBrowse() {
               marginTop: 10,
               color: "#475569",
               lineHeight: 1.7,
-              maxWidth: 560,
+        width: "100%",
             }}
           >
             Explore our collection of books organized by category. Pick a
@@ -415,7 +529,15 @@ function PublicBrowse() {
           </p>
         </div>
 
-        <CategoryGrid />
+        <div style={{ marginBottom: 32 }}>
+          <SearchBar onSearch={handleSearch} searching={searching} />
+        </div>
+
+        {searchQuery.trim() ? (
+          <BookResults books={searchResults} loading={searching} />
+        ) : (
+          <CategoryGrid />
+        )}
       </div>
     </div>
   );
@@ -426,6 +548,9 @@ function LoggedInBrowse() {
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
   const [isMobile, setIsMobile] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -433,6 +558,24 @@ function LoggedInBrowse() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  const handleSearch = async (q) => {
+    setSearchQuery(q);
+    if (!q.trim()) {
+      setSearchResults([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    try {
+      const res = await fetch(`http://localhost:5000/books/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      setSearchResults(Array.isArray(data) ? data : []);
+    } catch {
+      setSearchResults([]);
+    }
+    setSearching(false);
+  };
 
   const sidebarNav = [
     { to: "/user-profile", label: "My Profile" },
@@ -484,8 +627,17 @@ function LoggedInBrowse() {
               {user?.emri || "User"}
             </div>
           </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <SearchBar onSearch={handleSearch} searching={searching} />
+          </div>
+
           <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-            <CategoryGrid />
+            {searchQuery.trim() ? (
+              <BookResults books={searchResults} loading={searching} />
+            ) : (
+              <CategoryGrid />
+            )}
           </div>
         </div>
       </div>

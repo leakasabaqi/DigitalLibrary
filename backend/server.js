@@ -48,6 +48,21 @@ app.get("/books", (req, res) => {
   });
 });
 
+app.get("/books/search", (req, res) => {
+  const q = req.query.q || "";
+  const sql = `
+    SELECT b.*, a.emri AS autor_emri, a.mbiemri AS autor_mbiemri
+    FROM books b
+    LEFT JOIN authors a ON b.autori_id = a.id
+    WHERE b.titulli LIKE ? OR a.emri LIKE ? OR a.mbiemri LIKE ?
+  `;
+  const like = `%${q}%`;
+  db.query(sql, [like, like, like], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
 app.post("/books", (req, res) => {
   const {
     titulli,
@@ -660,7 +675,24 @@ app.post("/collections", (req, res) => {
   ];
   db.query(sql, [values], (err, data) => {
     if (err) return res.status(500).json(err);
-    res.json("Koleksioni u krijua me sukses!");
+    res.json({ message: "Koleksioni u krijua me sukses!", id: data.insertId });
+  });
+});
+
+app.get("/collections/:id/books", (req, res) => {
+  const { id } = req.params;
+  const sql = `
+    SELECT cb.id, cb.libri_id, cb.data_shtimit, b.titulli, b.foto_kopertines,
+           a.emri AS autor_emri, a.mbiemri AS autor_mbiemri
+    FROM collectionbooks cb
+    JOIN books b ON cb.libri_id = b.id
+    LEFT JOIN authors a ON b.autori_id = a.id
+    WHERE cb.koleksioni_id = ?
+    ORDER BY cb.data_shtimit DESC
+  `;
+  db.query(sql, [id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json(data);
   });
 });
 
@@ -683,9 +715,12 @@ app.put("/collections/:id", (req, res) => {
 
 app.delete("/collections/:id", (req, res) => {
   const id = req.params.id;
-  db.query("DELETE FROM collections WHERE id = ?", [id], (err, data) => {
+  db.query("DELETE FROM collectionbooks WHERE koleksioni_id = ?", [id], (err) => {
     if (err) return res.status(500).json(err);
-    res.json("U fshi!");
+    db.query("DELETE FROM collections WHERE id = ?", [id], (err2, data) => {
+      if (err2) return res.status(500).json(err2);
+      res.json("U fshi!");
+    });
   });
 });
 

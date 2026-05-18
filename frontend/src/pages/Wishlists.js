@@ -131,65 +131,40 @@ const Wishlists = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 18,
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: 14,
           }}
         >
-          {wishlist.map((w) => (
+          {wishlist.map((w) => {
+            const bookInfo = books.find((b) => Number(b.id) === Number(w.libri_id));
+            return (
             <div
               key={w.id}
               className="card"
-              style={{ position: "relative", borderLeft: "5px solid #2563eb" }}
+              style={{ overflow: "hidden", borderRadius: 12 }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 10,
-                  flexWrap: "wrap",
-                }}
-              >
-                <div>
-                  <small className="help">
-                    {w.emri} {w.mbiemri}
-                  </small>
-                  <div
-                    style={{ fontSize: 18, fontWeight: 700, margin: "8px 0" }}
-                  >
-                    {w.titulli}
-                  </div>
+              {w.foto_kopertines ? (
+                <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+                  <img src={w.foto_kopertines} alt={w.titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button
-                    type="button"
-                    className="btn btnGhost"
-                    onClick={() => {
-                      setRecord(w);
-                      setIsEditing(true);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btnGhost"
-                    onClick={async () => {
-                      if (await window.confirm("Fshije?")) {
-                        await axios.delete(
-                          `http://localhost:5000/wishlists/${w.id}`,
-                        );
-                        fetchData();
-                      }
-                    }}
-                  >
-                    Delete
-                  </button>
+              ) : (
+                <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 600, fontSize: 13 }}>No cover</div>
+              )}
+              <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+                <small className="help" style={{ margin: 0 }}>{w.emri} {w.mbiemri}</small>
+                <div style={{ fontSize: 15, fontWeight: 700 }}>{w.titulli}</div>
+                {bookInfo?.autor_emri && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{bookInfo.autor_emri} {bookInfo.autor_mbiemri}</div>}
+                {bookInfo?.isbn && <div style={{ fontSize: 11, color: "#94a3b8" }}>ISBN: {bookInfo.isbn}</div>}
+                <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
+                  <button type="button" className="btn btnGhost" onClick={() => { setRecord(w); setIsEditing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button>
+                  <button type="button" className="btn btnGhost" onClick={async () => { if (await window.confirm("Fshije?")) { await axios.delete(`http://localhost:5000/wishlists/${w.id}`); fetchData(); } }}>Delete</button>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
+
       </div>
     </div>
   );

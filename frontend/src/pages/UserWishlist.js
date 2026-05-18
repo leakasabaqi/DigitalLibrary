@@ -168,85 +168,43 @@ export default function UserWishlist() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? "280px" : "320px"}, 1fr))`,
-                gap: 16,
+                gridTemplateColumns: `repeat(auto-fill, minmax(200px, 1fr))`,
+                gap: 14,
               }}
             >
-              {wishlist.map((w) => (
+              {wishlist.map((w) => {
+                const authorBook = books.find((b) => Number(b.id) === Number(w.libri_id));
+                return (
                 <div
                   key={w.id}
                   style={{
                     background: "#fff",
-                    borderRadius: 18,
+                    borderRadius: 12,
                     border: `1px solid ${borderColor}`,
-                    borderLeft: "6px solid #2563eb",
-                    boxShadow: "0 8px 30px rgba(15,23,42,0.06)",
-                    padding: 20,
-                    display: "flex",
-                    gap: 16,
-                    flexDirection: isMobile ? "column" : "row",
+                    boxShadow: "0 4px 16px rgba(15,23,42,0.06)",
+                    overflow: "hidden",
                     transition: "transform .15s ease, box-shadow .15s ease",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-3px)";
-                    e.currentTarget.style.boxShadow = "0 16px 48px rgba(15,23,42,0.10)";
+                    e.currentTarget.style.boxShadow = "0 12px 32px rgba(15,23,42,0.10)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 8px 30px rgba(15,23,42,0.06)";
+                    e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.06)";
                   }}
                 >
                   {w.foto_kopertines ? (
-                    <img
-                      src={w.foto_kopertines}
-                      alt={w.titulli}
-                      style={{
-                        width: isMobile ? "100%" : 100,
-                        height: isMobile ? 140 : 140,
-                        borderRadius: 10,
-                        objectFit: "cover",
-                        flexShrink: 0,
-                        background: "#f1f5f9",
-                      }}
-                    />
+                    <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+                      <img src={w.foto_kopertines} alt={w.titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    </div>
                   ) : (
-                    <div
-                      style={{
-                        width: isMobile ? "100%" : 100,
-                        height: 140,
-                        borderRadius: 10,
-                        background: "#f1f5f9",
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#94a3b8",
-                        fontWeight: 600,
-                        fontSize: 12,
-                      }}
-                    >
-                      No cover
-                    </div>
+                    <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 600, fontSize: 13 }}>No cover</div>
                   )}
-                  <div
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: 800,
-                        fontSize: 16,
-                        color: "#0f172a",
-                        marginBottom: 4,
-                      }}
-                    >
-                      {w.titulli}
-                    </div>
-
+                  <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{w.titulli}</div>
+                    {authorBook?.autor_emri && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{authorBook.autor_emri} {authorBook.autor_mbiemri}</div>}
+                    {authorBook?.isbn && <div style={{ fontSize: 11, color: "#94a3b8" }}>ISBN: {authorBook.isbn}</div>}
                     <button
                       onClick={() =>
                         axios
@@ -257,33 +215,15 @@ export default function UserWishlist() {
                             ),
                           )
                       }
-                      style={{
-                        marginTop: "auto",
-                        alignSelf: "flex-start",
-                        padding: "8px 14px",
-                        borderRadius: 10,
-                        border: `1px solid ${borderColor}`,
-                        background: "transparent",
-                        color: "#dc2626",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                        transition: "background .12s ease",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.background =
-                          "rgba(220,38,38,0.08)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.background = "transparent")
-                      }
+                      className="btn btnGhost"
+                      style={{ alignSelf: "flex-start", marginTop: 6, color: "#dc2626", fontSize: 12 }}
                     >
                       Remove
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>

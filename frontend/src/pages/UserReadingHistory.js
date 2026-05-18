@@ -244,8 +244,8 @@ export default function UserReadingHistory() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? "280px" : "340px"}, 1fr))`,
-                gap: isMobile ? 12 : 16,
+                gridTemplateColumns: `repeat(auto-fill, minmax(200px, 1fr))`,
+                gap: 14,
               }}
             >
               {history.map((h) => {
@@ -261,213 +261,58 @@ export default function UserReadingHistory() {
                     key={h.id}
                     style={{
                       background: "#fff",
-                      borderRadius: 18,
+                      borderRadius: 12,
                       border: `1px solid ${borderColor}`,
-                      borderLeft: isEditing ? "6px solid #f59e0b" : `6px solid ${st.color}`,
-                      boxShadow: "0 8px 30px rgba(15,23,42,0.06)",
-                      padding: isMobile ? 14 : 20,
+                      boxShadow: "0 4px 16px rgba(15,23,42,0.06)",
+                      overflow: "hidden",
                       transition: "transform .15s ease, box-shadow .15s ease",
                     }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(15,23,42,0.10)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.06)"; }}
                   >
-                    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 12 : 20 }}>
-                      {cover ? (
-                        <img
-                          src={cover}
-                          alt={h.libri_titulli}
-                          style={{
-                            width: isMobile ? "100%" : 140,
-                            height: isMobile ? 180 : 200,
-                            borderRadius: 12,
-                            objectFit: "cover",
-                            flexShrink: 0,
-                            background: "#f1f5f9",
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: isMobile ? "100%" : 140,
-                            height: isMobile ? 120 : 200,
-                            borderRadius: 12,
-                            background: "#f1f5f9",
-                            flexShrink: 0,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#94a3b8",
-                            fontWeight: 600,
-                            fontSize: 13,
-                            textAlign: "center",
-                            padding: 10,
-                          }}
-                        >
-                          No cover
+                    {cover ? (
+                      <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+                        <img src={cover} alt={h.libri_titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                      </div>
+                    ) : (
+                      <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 600, fontSize: 13 }}>No cover</div>
+                    )}
+                    <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, flexWrap: "wrap" }}>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a", flex: 1 }}>{h.libri_titulli}</div>
+                        <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 10, fontWeight: 700, background: st.bg, color: st.color, whiteSpace: "nowrap", flexShrink: 0 }}>{st.text}</span>
+                      </div>
+
+                      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 1 }}>Progress</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, color: st.color }}>{percent}%</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 1 }}>Page</div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>{currentPage}{totalPages > 0 ? ` / ${totalPages}` : ""}</div>
+                        </div>
+                      </div>
+
+                      <div style={{ width: "100%", height: 6, background: "rgba(15,23,42,0.08)", borderRadius: 999, overflow: "hidden" }}>
+                        <div style={{ width: `${percent}%`, height: "100%", background: percent === 100 ? "#16a34a" : "#2563eb", borderRadius: 999, transition: "width 0.5s ease" }} />
+                      </div>
+
+                      {isEditing && (
+                        <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                          <input className="input" type="number" min={1} max={totalPages || undefined} value={editPage} onChange={(e) => setEditPage(e.target.value)} style={{ width: 70, padding: "6px 8px", fontSize: 12 }} autoFocus />
+                          <span style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>/ {totalPages}</span>
+                          <button type="button" className="btn btnGhost" onClick={() => saveEdit(h)}>Save</button>
+                          <button type="button" className="btn btnGhost" onClick={cancelEdit}>Cancel</button>
                         </div>
                       )}
-                      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 4 }}>
-                          <div style={{ fontWeight: 800, fontSize: isMobile ? 15 : 16, color: "#0f172a" }}>
-                            {h.libri_titulli}
-                          </div>
-                          <span
-                            style={{
-                              padding: "4px 10px",
-                              borderRadius: 8,
-                              fontSize: 11,
-                              fontWeight: 700,
-                              background: st.bg,
-                              color: st.color,
-                              whiteSpace: "nowrap",
-                              flexShrink: 0,
-                            }}
-                          >
-                            {st.text}
-                          </span>
+
+                      {!isEditing && (
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button type="button" className="btn btnGhost" onClick={() => startEdit(h)}>Edit</button>
+                          <button type="button" className="btn btnGhost" onClick={() => handleDelete(h.id)}>Delete</button>
                         </div>
-
-                        <div style={{ display: "flex", gap: isMobile ? 12 : 20, marginTop: 12 }}>
-                          <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 2 }}>
-                              Progress
-                            </div>
-                            <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: st.color }}>
-                              {percent}%
-                            </div>
-                          </div>
-                          <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 2 }}>
-                              Page
-                            </div>
-                            <div style={{ fontSize: isMobile ? 14 : 16, fontWeight: 700, color: "#0f172a" }}>
-                              {currentPage}{totalPages > 0 ? ` / ${totalPages}` : ""}
-                            </div>
-                          </div>
-                        </div>
-
-                        {isEditing && (
-                          <div style={{ marginTop: 12, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                            <input
-                              className="input"
-                              type="number"
-                              min={1}
-                              max={totalPages || undefined}
-                              value={editPage}
-                              onChange={(e) => setEditPage(e.target.value)}
-                              style={{
-                                width: isMobile ? 80 : 100,
-                                padding: "8px 10px",
-                                fontSize: 13,
-                                ...inputStyle,
-                              }}
-                              autoFocus
-                            />
-                            {!isMobile && (
-                              <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>
-                                / {totalPages}
-                              </span>
-                            )}
-                            <button
-                              onClick={() => saveEdit(h)}
-                              style={{
-                                padding: "8px 16px",
-                                borderRadius: 10,
-                                border: "none",
-                                background: "#2563eb",
-                                color: "#fff",
-                                fontWeight: 700,
-                                fontSize: 13,
-                                cursor: "pointer",
-                                fontFamily: "inherit",
-                              }}
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              style={{
-                                padding: "8px 16px",
-                                borderRadius: 10,
-                                border: `1px solid ${borderColor}`,
-                                background: "transparent",
-                                color: "#64748b",
-                                fontWeight: 600,
-                                fontSize: 13,
-                                cursor: "pointer",
-                                fontFamily: "inherit",
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        )}
-
-                        <div style={{ marginTop: "auto", paddingTop: isMobile ? 12 : 16 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              height: isMobile ? 8 : 10,
-                              background: "rgba(15,23,42,0.08)",
-                              borderRadius: 999,
-                              overflow: "hidden",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: `${percent}%`,
-                                height: "100%",
-                                background: percent === 100 ? "#16a34a" : "#2563eb",
-                                borderRadius: 999,
-                                transition: "width 0.5s ease",
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {!isEditing && (
-                          <div style={{ display: "flex", gap: 8, marginTop: isMobile ? 12 : 14 }}>
-                            <button
-                              onClick={() => startEdit(h)}
-                              style={{
-                                padding: "8px 14px",
-                                borderRadius: 10,
-                                border: `1px solid ${borderColor}`,
-                                background: "transparent",
-                                color: "#2563eb",
-                                fontWeight: 700,
-                                fontSize: 12,
-                                cursor: "pointer",
-                                fontFamily: "inherit",
-                                transition: "background .12s ease",
-                                flex: isMobile ? 1 : undefined,
-                              }}
-                              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(37,99,235,0.08)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                            >
-                              Edit Progress
-                            </button>
-                            <button
-                              onClick={() => handleDelete(h.id)}
-                              style={{
-                                padding: "8px 14px",
-                                borderRadius: 10,
-                                border: `1px solid ${borderColor}`,
-                                background: "transparent",
-                                color: "#dc2626",
-                                fontWeight: 700,
-                                fontSize: 12,
-                                cursor: "pointer",
-                                fontFamily: "inherit",
-                                transition: "background .12s ease",
-                                flex: isMobile ? 1 : undefined,
-                              }}
-                              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(220,38,38,0.08)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 );

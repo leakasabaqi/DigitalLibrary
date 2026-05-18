@@ -263,114 +263,52 @@ const ReadingHistory = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
               gap: 14,
             }}
           >
             {filteredHistory.map((h) => {
               const isCompleted = h.statusi === "completed";
+              const cover = h.foto_kopertines;
               return (
                 <div
                   key={h.id}
                   className="card"
-                  style={{
-                    position: "relative",
-                    borderLeft: `6px solid ${isCompleted ? "#16a34a" : "#2563eb"}`,
-                  }}
+                  style={{ overflow: "hidden", borderRadius: 12 }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 10,
-                      flexWrap: "wrap",
-                      marginBottom: 14,
-                    }}
-                  >
-                    <div>
-                      <div
-                        className="help"
-                        style={{
-                          color: "#2563eb",
-                          fontWeight: 900,
-                          textTransform: "uppercase",
-                          fontSize: 12,
-                          marginBottom: 6,
-                        }}
-                      >
-                        {h.emri} {h.mbiemri}
+                  {cover ? (
+                    <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+                      <img src={cover} alt={h.libri_titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    </div>
+                  ) : (
+                    <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 600, fontSize: 13 }}>No cover</div>
+                  )}
+                  <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", marginBottom: 2 }}>{h.emri} {h.mbiemri}</div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{h.libri_titulli}</div>
                       </div>
-                      <div
-                        style={{
-                          fontWeight: 900,
-                          fontSize: 18,
-                          color: "#0f172a",
-                        }}
-                      >
-                        {h.libri_titulli}
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        <button type="button" className="btn btnGhost" onClick={() => handleEdit(h)}>Edit</button>
+                        <button type="button" className="btn btnGhost" onClick={async () => { if (await window.confirm("A jeni i sigurt?")) { await axios.delete(`http://localhost:5000/reading-history/${h.id}`); fetchData(); } }}>Delete</button>
                       </div>
                     </div>
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      <button
-                        type="button"
-                        className="btn btnGhost"
-                        onClick={() => handleEdit(h)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btnGhost"
-                        onClick={async () => {
-                          if (await window.confirm("A jeni i sigurt?")) {
-                            await axios.delete(
-                              `http://localhost:5000/reading-history/${h.id}`,
-                            );
-                            fetchData();
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
+
+                    <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                      <div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 1 }}>Progress</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: isCompleted ? "#16a34a" : "#2563eb" }}>{h.perqindja_leximit}%</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 1 }}>Page</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>{h.faqja_aktuale}</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div
-                    className="help"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      color: "#475569",
-                      fontWeight: 800,
-                      fontSize: 12,
-                      marginBottom: 12,
-                    }}
-                  >
-                    <span>
-                      Progresi: <strong>{h.perqindja_leximit}%</strong>
-                    </span>
-                    <span>
-                      Faqja: <strong>{h.faqja_aktuale}</strong>
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      width: "100%",
-                      height: 10,
-                      background: "rgba(15,23,42,0.08)",
-                      borderRadius: 999,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${h.perqindja_leximit}%`,
-                        height: "100%",
-                        background: isCompleted ? "#16a34a" : "#1d4ed8",
-                        transition: "width 0.5s ease-in-out",
-                      }}
-                    />
+                    <div style={{ width: "100%", height: 6, background: "rgba(15,23,42,0.08)", borderRadius: 999, overflow: "hidden" }}>
+                      <div style={{ width: `${h.perqindja_leximit}%`, height: "100%", background: isCompleted ? "#16a34a" : "#1d4ed8", borderRadius: 999, transition: "width 0.5s ease" }} />
+                    </div>
                   </div>
                 </div>
               );
