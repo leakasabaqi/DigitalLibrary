@@ -14,6 +14,7 @@ const AddBook = () => {
     gjuha: "",
     numri_faqeve: "",
     foto_kopertines: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -89,6 +90,7 @@ const AddBook = () => {
           gjuha: "",
           numri_faqeve: "",
           foto_kopertines: "",
+          description: "",
         });
         fetchBooks();
       } else {
@@ -133,6 +135,31 @@ const AddBook = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="formGrid">
+          {/* Cover Preview on top of all fields */}
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <div style={{
+                width: 140,
+                height: 200,
+                maxWidth: '100%',
+                borderRadius: 12,
+                backgroundColor: '#f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                border: '2px dashed #cbd5e1'
+              }}>
+                {book.foto_kopertines ? (
+                  <img src={book.foto_kopertines} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ color: '#94a3b8', fontSize: 12, textAlign: 'center', padding: 10 }}>No Cover<br/>Preview</span>
+                )}
+              </div>
+              <label className="label">Cover Preview</label>
+            </div>
+          </div>
+
           <div className="field">
             <label className="label">Book Title *</label>
             <input
@@ -182,6 +209,17 @@ const AddBook = () => {
           </div>
 
           <div className="field">
+            <label className="label">Cover Image URL</label>
+            <input
+              className="input"
+              name="foto_kopertines"
+              value={book.foto_kopertines || ""}
+              placeholder="https://image-link.com"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="field">
             <label className="label">ISBN</label>
             <input
               className="input"
@@ -225,51 +263,16 @@ const AddBook = () => {
             />
           </div>
 
-          {/* Image Input with Preview - Keeping your layout but adding functionality */}
-          <div
-            className="field"
-            style={{
-              gridColumn: "1 / -1",
-              display: "flex",
-              gap: "15px",
-              alignItems: "flex-end",
-              flexWrap: "wrap",
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <label className="label">Cover Image URL</label>
-              <input
-                className="input"
-                name="foto_kopertines"
-                value={book.foto_kopertines || ""}
-                placeholder="Enter cover image URL"
-                onChange={handleChange}
-              />
-            </div>
-            {/* Small dynamic preview next to the input */}
-            <div
-              style={{
-                width: "60px",
-                height: "80px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#f9f9f9",
-              }}
-            >
-              {book.foto_kopertines ? (
-                <img
-                  src={book.foto_kopertines}
-                  alt="Preview"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <span style={{ fontSize: "10px", color: "#999" }}>No Img</span>
-              )}
-            </div>
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Description</label>
+            <textarea
+              className="textarea"
+              name="description"
+              value={book.description || ""}
+              placeholder="Brief description of the book"
+              onChange={handleChange}
+              rows={4}
+            />
           </div>
 
           <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
@@ -290,6 +293,7 @@ const AddBook = () => {
                     gjuha: "",
                     numri_faqeve: "",
                     foto_kopertines: "",
+                    description: "",
                   })
                 }
               >
@@ -353,6 +357,11 @@ const AddBook = () => {
                         Author: {b.autor_emri || "Unknown"} {b.autor_mbiemri || ""}
                       </div>
                       <div className="help">ISBN: {b.isbn || "N/A"}</div>
+                      {b.description && (
+                        <div style={{ color: "#64748b", fontSize: 12, lineHeight: 1.6, marginTop: 6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          {b.description}
+                        </div>
+                      )}
                     </div>
                     {/* Book Cover displayed in the card */}
                     <img

@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, createSearchParams } from "react-router-dom";
 import { useEffect, useState, useMemo, useRef } from "react";
 import Header from "../components/Header";
 
@@ -21,7 +21,7 @@ function SearchBar({ onSearch, searching }) {
   return (
     <div
       style={{
-        maxWidth: 560,
+        maxWidth: "100%",
         display: "flex",
         alignItems: "center",
         gap: 10,
@@ -432,28 +432,31 @@ function BookResults({ books, loading }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
       {books.map((b) => (
-        <div key={b.id} style={{
-          background: "#fff", borderRadius: 12, border: `1px solid ${borderColor}`,
-          boxShadow: "0 4px 16px rgba(15,23,42,0.06)", overflow: "hidden",
-          display: "flex", flexDirection: "column",
-          transition: "transform .15s ease, box-shadow .15s ease",
-        }}
-          onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(15,23,42,0.10)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.06)"; }}
-        >
-          {b.foto_kopertines ? (
-            <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
-              <img src={b.foto_kopertines} alt={b.titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <Link to={`/book/${b.id}`} key={b.id} style={{ textDecoration: "none", color: "inherit" }}>
+          <div style={{
+            background: "#fff", borderRadius: 12, border: `1px solid ${borderColor}`,
+            boxShadow: "0 4px 16px rgba(15,23,42,0.06)", overflow: "hidden",
+            display: "flex", flexDirection: "column",
+            transition: "transform .15s ease, box-shadow .15s ease",
+          }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(15,23,42,0.10)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.06)"; }}
+          >
+            {b.foto_kopertines ? (
+              <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 10 }}>
+                <img src={b.foto_kopertines} alt={b.titulli} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              </div>
+            ) : (
+              <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 700, fontSize: 13 }}>No Cover</div>
+            )}
+            <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{b.titulli}</div>
+              {b.autor_emri && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{b.autor_emri} {b.autor_mbiemri}</div>}
+              {b.description && <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{b.description}</div>}
+              {b.isbn && <div style={{ fontSize: 11, color: "#94a3b8" }}>ISBN: {b.isbn}</div>}
             </div>
-          ) : (
-            <div style={{ width: "100%", height: 260, background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontWeight: 700, fontSize: 13 }}>No Cover</div>
-          )}
-          <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{b.titulli}</div>
-            {b.autor_emri && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{b.autor_emri} {b.autor_mbiemri}</div>}
-            {b.isbn && <div style={{ fontSize: 11, color: "#94a3b8" }}>ISBN: {b.isbn}</div>}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

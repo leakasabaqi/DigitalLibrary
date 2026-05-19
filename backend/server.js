@@ -79,6 +79,21 @@ app.get("/books/category/:id", (req, res) => {
   });
 });
 
+app.get("/books/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = `
+    SELECT b.*, a.emri AS autor_emri, a.mbiemri AS autor_mbiemri
+    FROM books b
+    LEFT JOIN authors a ON b.autori_id = a.id
+    WHERE b.id = ?
+  `;
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    if (result.length === 0) return res.status(404).json("Not found");
+    res.json(result[0]);
+  });
+});
+
 app.post("/books", (req, res) => {
   const {
     titulli,
@@ -92,11 +107,12 @@ app.post("/books", (req, res) => {
     madhesia_mb,
     shtegu_skedarit,
     foto_kopertines,
+    description,
   } = req.body;
 
   const sql = `INSERT INTO books 
-    (titulli, autori_id, kategoria_id, isbn, viti_botimit, gjuha, numri_faqeve, formati, madhesia_mb, shtegu_skedarit, foto_kopertines) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    (titulli, autori_id, kategoria_id, isbn, viti_botimit, gjuha, numri_faqeve, formati, madhesia_mb, shtegu_skedarit, foto_kopertines, description) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   db.query(
     sql,
@@ -112,6 +128,7 @@ app.post("/books", (req, res) => {
       madhesia_mb,
       shtegu_skedarit,
       foto_kopertines,
+      description || null,
     ],
     (err, result) => {
       if (err) {
@@ -134,9 +151,10 @@ app.put("/books/:id", (req, res) => {
     gjuha,
     numri_faqeve,
     foto_kopertines,
+    description,
   } = req.body;
   const sql =
-    "UPDATE books SET titulli=?, autori_id=?, kategoria_id=?, isbn=?, viti_botimit=?, gjuha=?, numri_faqeve=?, foto_kopertines=? WHERE id=?";
+    "UPDATE books SET titulli=?, autori_id=?, kategoria_id=?, isbn=?, viti_botimit=?, gjuha=?, numri_faqeve=?, foto_kopertines=?, description=? WHERE id=?";
   db.query(
     sql,
     [
@@ -148,6 +166,7 @@ app.put("/books/:id", (req, res) => {
       gjuha,
       numri_faqeve,
       foto_kopertines,
+      description || null,
       id,
     ],
     (err, result) => {
