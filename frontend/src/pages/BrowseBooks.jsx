@@ -124,6 +124,8 @@ function Sidebar({ pathname }) {
           { to: "/user-collections", label: "Collections" },
           { to: "/user-bookmarks", label: "Bookmarks" },
           { to: "/user-book-requests", label: "Book Requests" },
+          { to: "/user-reviews", label: "Reviews" },
+          { to: "/user-subscriptions", label: "Subscriptions" },
         ],
       },
     ],
@@ -254,7 +256,7 @@ function Sidebar({ pathname }) {
   );
 }
 
-function CategoryGrid({ onSelect }) {
+function CategoryGrid({ onSelect, hasSubscription }) {
   const accent = "#2563eb";
   const surface = "#ffffff";
   const border = "rgba(15,23,42,0.10)";
@@ -309,115 +311,140 @@ function CategoryGrid({ onSelect }) {
   }
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: 18,
-        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-      }}
-    >
-      {mainCategories.map((cat) => {
-        const subs = getSubcategories(cat.id);
-        return (
-          <div
-            key={cat.id}
-            onClick={() => onSelect?.(cat)}
-            style={{
-              padding: 24,
-              borderRadius: 18,
-              background: surface,
-              border: `1px solid ${border}`,
-              boxShadow: "0 8px 30px rgba(15, 23, 42, 0.06)",
-              transition: "transform .15s ease, box-shadow .15s ease",
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-3px)";
-              e.currentTarget.style.boxShadow =
-                "0 16px 48px rgba(15, 23, 42, 0.10)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 30px rgba(15, 23, 42, 0.06)";
-            }}
-          >
-            {cat.ikona && (
-              <img
-                src={cat.ikona}
-                alt={cat.emertimi}
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 12,
-                  objectFit: "cover",
-                  marginBottom: 14,
-                }}
-              />
-            )}
+    <div>
+      <div
+        style={{
+          display: "grid",
+          gap: 18,
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+        }}
+      >
+        {mainCategories.map((cat) => {
+          const subs = getSubcategories(cat.id);
+          const isLocked = !!cat.a_eshte_premium && !hasSubscription;
+          return (
             <div
+              key={cat.id}
+              onClick={() => onSelect?.(cat)}
               style={{
-                fontWeight: 800,
-                fontSize: 16,
-                marginBottom: 6,
+                padding: 24,
+                borderRadius: 18,
+                background: surface,
+                border: `1px solid ${border}`,
+                boxShadow: "0 8px 30px rgba(15, 23, 42, 0.06)",
+                transition: "transform .15s ease, box-shadow .15s ease",
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow =
+                  "0 16px 48px rgba(15, 23, 42, 0.10)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 30px rgba(15, 23, 42, 0.06)";
               }}
             >
-              {cat.emertimi}
-            </div>
-            {cat.pershkrimi && (
-              <div
-                style={{
-                  color: "#64748b",
-                  fontSize: 13,
-                  lineHeight: 1.6,
-                  marginBottom: 12,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {cat.pershkrimi}
-              </div>
-            )}
-            {subs.length > 0 && (
-              <div style={{ marginTop: "auto" }}>
+              {!!isLocked && (
                 <div
                   style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "#94a3b8",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.04em",
-                    marginBottom: 8,
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: "rgba(100, 116, 139, 0.15)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1,
                   }}
                 >
-                  Subcategories
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
                 </div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {subs.map((sub) => (
-                    <span
-                      key={sub.id}
-                      style={{
-                        padding: "4px 10px",
-                        borderRadius: 8,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        background: "rgba(37, 99, 235, 0.08)",
-                        color: accent,
-                      }}
-                    >
-                      {sub.emertimi}
-                    </span>
-                  ))}
-                </div>
+              )}
+              {!!cat.ikona && (
+                <img
+                  src={cat.ikona}
+                  alt={cat.emertimi}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    objectFit: "cover",
+                    marginBottom: 14,
+                  }}
+                />
+              )}
+              <div
+                style={{
+                  fontWeight: 800,
+                  fontSize: 16,
+                  marginBottom: 6,
+                }}
+              >
+                {cat.emertimi}
               </div>
-            )}
-          </div>
-        );
-      })}
+              {cat.pershkrimi && (
+                <div
+                  style={{
+                    color: "#64748b",
+                    fontSize: 13,
+                    lineHeight: 1.6,
+                    marginBottom: 12,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {cat.pershkrimi}
+                </div>
+              )}
+              {subs.length > 0 && (
+                <div style={{ marginTop: "auto" }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#94a3b8",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Subcategories
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {subs.map((sub) => (
+                      <span
+                        key={sub.id}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: 8,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          background: "rgba(37, 99, 235, 0.08)",
+                          color: accent,
+                        }}
+                      >
+                        {sub.emertimi}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -537,11 +564,19 @@ function PublicBrowse() {
             )}
             <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{categoryBooks.length} {categoryBooks.length === 1 ? "book" : "books"}</div>
           </div>
+          {!!selectedCategory.a_eshte_premium && (
+            <div style={{ marginBottom: 24, padding: "14px 20px", borderRadius: 12, background: "#fef3c7", border: "1px solid #f59e0b", color: "#92400e", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              This is a premium category — you need an active subscription to read these books.
+            </div>
+          )}
           <BookResults books={categoryBooks} loading={categoryLoading} />
         </>
       );
     }
-    return <CategoryGrid onSelect={handleCategorySelect} />;
+    return <CategoryGrid onSelect={handleCategorySelect} hasSubscription={false} />;
   };
 
   return (
@@ -605,6 +640,7 @@ function LoggedInBrowse() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryBooks, setCategoryBooks] = useState([]);
   const [categoryLoading, setCategoryLoading] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 980);
@@ -612,6 +648,15 @@ function LoggedInBrowse() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`http://localhost:5000/subscriptions/active/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setHasSubscription(!!data))
+        .catch(() => setHasSubscription(false));
+    }
+  }, [user?.id]);
 
   const handleSearch = async (q) => {
     setSearchQuery(q);
@@ -654,6 +699,8 @@ function LoggedInBrowse() {
     { to: "/user-collections", label: "Collections" },
     { to: "/user-bookmarks", label: "Bookmarks" },
     { to: "/user-book-requests", label: "Book Requests" },
+    { to: "/user-reviews", label: "Reviews" },
+    { to: "/user-subscriptions", label: "Subscriptions" },
   ];
 
   const content = () => {
@@ -681,11 +728,19 @@ function LoggedInBrowse() {
             )}
             <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{categoryBooks.length} {categoryBooks.length === 1 ? "book" : "books"}</div>
           </div>
+          {!!selectedCategory.a_eshte_premium && !hasSubscription && (
+            <div style={{ marginBottom: 24, padding: "14px 20px", borderRadius: 12, background: "#fef3c7", border: "1px solid #f59e0b", color: "#92400e", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              This is a premium category — you need an active subscription to read these books.
+            </div>
+          )}
           <BookResults books={categoryBooks} loading={categoryLoading} />
         </>
       );
     }
-    return <CategoryGrid onSelect={handleCategorySelect} />;
+    return <CategoryGrid onSelect={handleCategorySelect} hasSubscription={hasSubscription} />;
   };
 
   return (

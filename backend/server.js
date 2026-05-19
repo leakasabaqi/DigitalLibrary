@@ -437,6 +437,22 @@ app.get("/subscriptions", (req, res) => {
   });
 });
 
+app.get("/subscriptions/active/:userId", (req, res) => {
+  const { userId } = req.params;
+  const sql = `
+    SELECT s.*, p.emertimi AS plani_emri
+    FROM subscriptions s
+    JOIN plans p ON s.plani_id = p.id
+    WHERE s.perdoruesi_id = ? AND s.statusi = 'aktiv'
+    AND s.data_skadimit >= CURDATE()
+    LIMIT 1
+  `;
+  db.query(sql, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json(data.length > 0 ? data[0] : null);
+  });
+});
+
 app.put("/subscriptions/:id", (req, res) => {
   const subId = req.params.id;
   const {

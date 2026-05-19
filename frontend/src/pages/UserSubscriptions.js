@@ -120,8 +120,8 @@ export default function UserSubscriptions() {
 
   return (
     <UserLayout
-      pageTitle="Subscription Plans"
-      pageSubtitle="Choose the plan that fits your reading habits"
+      pageTitle="Subscription"
+      pageSubtitle="Unlock premium categories and unlimited reading"
     >
       <div style={{ padding: 18 }}>
         {loading ? (
@@ -183,178 +183,175 @@ export default function UserSubscriptions() {
                 No subscription plans available yet.
               </div>
             ) : (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                  gap: 20,
-                }}
-              >
-                {plans.map((plan, idx) => {
-                  const owned = isSubscribedTo(plan.id);
-                  const isPopular = idx === 1 && plans.length >= 3;
-                  return (
-                    <div
-                      key={plan.id}
-                      style={{
-                        background: "#fff",
-                        border: owned
-                          ? `2px solid ${accent}`
-                          : isPopular
-                          ? `2px solid ${accent}`
-                          : "1px solid rgba(15,23,42,0.10)",
-                        borderRadius: 16,
-                        padding: 0,
-                        position: "relative",
-                        overflow: "hidden",
-                        boxShadow: owned
-                          ? "0 8px 30px rgba(37,99,235,0.15)"
-                          : isPopular
-                          ? "0 8px 30px rgba(37,99,235,0.12)"
-                          : "0 4px 16px rgba(15,23,42,0.06)",
-                      }}
-                    >
-                      {isPopular && !owned && (
-                        <div
-                          style={{
-                            background: accent,
-                            color: "#fff",
-                            textAlign: "center",
-                            fontSize: 11,
-                            fontWeight: 800,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.06em",
-                            padding: "6px 0",
-                          }}
-                        >
-                          Most Popular
-                        </div>
-                      )}
+              plans.map((plan) => {
+                const owned = isSubscribedTo(plan.id);
+                return (
+                  <div
+                    key={plan.id}
+                    style={{
+                      maxWidth: 480,
+                      background: "#fff",
+                      border: owned
+                        ? `2px solid ${accent}`
+                        : "1px solid rgba(15,23,42,0.10)",
+                      borderRadius: 20,
+                      overflow: "hidden",
+                      boxShadow: owned
+                        ? "0 12px 40px rgba(37,99,235,0.18)"
+                        : "0 8px 32px rgba(15,23,42,0.07)",
+                      position: "relative",
+                    }}
+                  >
+                    {!owned && (
+                      <div
+                        style={{
+                          background: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+                          color: "#fff",
+                          textAlign: "center",
+                          fontSize: 11,
+                          fontWeight: 800,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          padding: "7px 0",
+                        }}
+                      >
+                        ◆ Recommended
+                      </div>
+                    )}
 
-                      <div style={{ padding: "24px 24px 0" }}>
-                        <div
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 700,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.04em",
-                            color: "#64748b",
-                            marginBottom: 4,
-                          }}
-                        >
-                          {plan.emertimi}
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "baseline",
-                            gap: 4,
-                            marginBottom: 16,
-                          }}
-                        >
-                          <span style={{ fontSize: 32, fontWeight: 900, color: "#0f172a" }}>
-                            €{plan.cmimi_mujor}
-                          </span>
-                          <span style={{ fontSize: 14, color: "#94a3b8", fontWeight: 600 }}>
-                            /month
-                          </span>
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize: 13,
-                            color: "#475569",
-                            lineHeight: 1.5,
-                            marginBottom: 20,
-                            minHeight: 40,
-                          }}
-                        >
-                          {plan.pershkrimi || "No description"}
-                        </div>
-
-                        <div
-                          style={{
-                            borderTop: "1px solid rgba(15,23,42,0.06)",
-                            padding: "16px 0",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 10,
-                              marginBottom: 10,
-                              fontSize: 14,
-                              color: "#334155",
-                              fontWeight: 500,
-                            }}
-                          >
-                            <span style={{ color: "#16a34a", fontWeight: 900 }}>✓</span>
-                            {Number(plan.librat_max_mujor) === -1 ? "Unlimited books" : `Up to ${plan.librat_max_mujor} books / month`}
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 10,
-                              fontSize: 14,
-                              color: "#334155",
-                              fontWeight: 500,
-                            }}
-                          >
-                            <span style={{ color: plan.a_ka_shkarkim === 1 || plan.a_ka_shkarkim === "1" ? "#16a34a" : "#94a3b8", fontWeight: 900 }}>
-                              {plan.a_ka_shkarkim === 1 || plan.a_ka_shkarkim === "1" ? "✓" : "—"}
-                            </span>
-                            Download books
-                          </div>
-                        </div>
+                    <div style={{ padding: "32px 32px 0", textAlign: "center" }}>
+                      <div
+                        style={{
+                          color: "#64748b",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          marginBottom: 8,
+                        }}
+                      >
+                        {plan.emertimi}
                       </div>
 
-                      <div style={{ padding: "0 24px 24px" }}>
-                        {owned ? (
-                          <div
-                            style={{
-                              width: "100%",
-                              textAlign: "center",
-                              background: "rgba(37,99,235,0.08)",
-                              border: "1px solid rgba(37,99,235,0.2)",
-                              color: accent,
-                              borderRadius: 10,
-                              padding: "12px 0",
-                              fontWeight: 700,
-                              fontSize: 14,
-                              fontFamily: "inherit",
-                            }}
-                          >
-                            Current Plan
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => openPayment(plan)}
-                            style={{
-                              width: "100%",
-                              background: isPopular ? accent : "#fff",
-                              border: isPopular
-                                ? "1px solid " + accent
-                                : "1px solid rgba(15,23,42,0.18)",
-                              color: isPopular ? "#fff" : "#0f172a",
-                              borderRadius: 10,
-                              padding: "12px 0",
-                              fontWeight: 700,
-                              fontSize: 14,
-                              cursor: "pointer",
-                              fontFamily: "inherit",
-                            }}
-                          >
-                            Subscribe
-                          </button>
-                        )}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "baseline",
+                          justifyContent: "center",
+                          gap: 4,
+                          marginBottom: 6,
+                        }}
+                      >
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b" }}>€</span>
+                        <span style={{ fontSize: 52, fontWeight: 900, color: "#0f172a", letterSpacing: "-0.03em" }}>
+                          {Number(plan.cmimi_mujor).toFixed(0)}
+                        </span>
+                        <span style={{ fontSize: 15, color: "#94a3b8", fontWeight: 600 }}>
+                          /month
+                        </span>
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: 14,
+                          color: "#64748b",
+                          lineHeight: 1.6,
+                          marginBottom: 24,
+                          maxWidth: 340,
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                        }}
+                      >
+                        {plan.pershkrimi || "Unlock all premium categories and enjoy unlimited reading."}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+
+                    <div
+                      style={{
+                        margin: "0 32px",
+                        borderTop: "1px solid rgba(15,23,42,0.06)",
+                        padding: "20px 0",
+                      }}
+                    >
+                      {[
+                        "Unlimited books",
+                        "Access to all premium categories",
+                        "Download books",
+                        "Support the library",
+                      ].map((text, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            padding: "8px 0",
+                            fontSize: 14,
+                            color: "#334155",
+                            fontWeight: 500,
+                          }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                          <span>{text}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ padding: "0 32px 32px" }}>
+                      {owned ? (
+                        <div
+                          style={{
+                            width: "100%",
+                            textAlign: "center",
+                            background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                            border: "none",
+                            color: "#fff",
+                            borderRadius: 12,
+                            padding: "14px 0",
+                            fontWeight: 700,
+                            fontSize: 15,
+                            fontFamily: "inherit",
+                            boxShadow: "0 4px 16px rgba(37,99,235,0.30)",
+                          }}
+                        >
+                          ✓ Active Plan
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => openPayment(plan)}
+                          style={{
+                            width: "100%",
+                            background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                            border: "none",
+                            color: "#fff",
+                            borderRadius: 12,
+                            padding: "14px 0",
+                            fontWeight: 700,
+                            fontSize: 15,
+                            cursor: "pointer",
+                            fontFamily: "inherit",
+                            boxShadow: "0 4px 16px rgba(37,99,235,0.30)",
+                            transition: "transform .12s ease, box-shadow .12s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "translateY(-1px)";
+                            e.currentTarget.style.boxShadow = "0 8px 24px rgba(37,99,235,0.40)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 4px 16px rgba(37,99,235,0.30)";
+                          }}
+                        >
+                          Subscribe Now — €{Number(plan.cmimi_mujor).toFixed(0)}/month
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
             )}
           </>
         )}
