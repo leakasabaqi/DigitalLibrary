@@ -15,6 +15,7 @@ const AddBook = () => {
     numri_faqeve: "",
     foto_kopertines: "",
     description: "",
+    pdf_link: "",
   });
 
   useEffect(() => {
@@ -91,6 +92,7 @@ const AddBook = () => {
           numri_faqeve: "",
           foto_kopertines: "",
           description: "",
+          pdf_link: "",
         });
         fetchBooks();
       } else {
@@ -275,6 +277,17 @@ const AddBook = () => {
             />
           </div>
 
+          <div className="field" style={{ gridColumn: "1 / -1" }}>
+            <label className="label">PDF Link</label>
+            <input
+              className="input"
+              name="pdf_link"
+              value={book.pdf_link || ""}
+              placeholder="https://example.com/book.pdf"
+              onChange={handleChange}
+            />
+          </div>
+
           <div className="btnRow" style={{ gridColumn: "1 / -1" }}>
             <button type="submit" className="btn btnAccent">
               {book.id ? "Save Changes" : "Add Book"}
@@ -294,6 +307,7 @@ const AddBook = () => {
                     numri_faqeve: "",
                     foto_kopertines: "",
                     description: "",
+                    pdf_link: "",
                   })
                 }
               >

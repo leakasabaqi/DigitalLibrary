@@ -76,9 +76,42 @@ function DetailContent({ book, navigate }) {
         <div style={{ flex: 1, minWidth: 260, maxWidth: 640 }}>
           <div style={{ fontWeight: 900, fontSize: 30, lineHeight: 1.15, color: "#0f172a", marginBottom: 2 }}>{book.titulli}</div>
           {book.autor_emri && (
-            <div style={{ fontSize: 15, color: "#64748b", fontWeight: 600, marginBottom: 24 }}>
+            <div style={{ fontSize: 15, color: "#64748b", fontWeight: 600, marginBottom: 12 }}>
               by {book.autor_emri} {book.autor_mbiemri}
             </div>
+          )}
+          {book.pdf_link && (
+            <a
+              href={book.pdf_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none", display: "inline-block", marginBottom: 24 }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "#2563eb",
+                  color: "#fff",
+                  padding: "12px 28px",
+                  borderRadius: 12,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 16px rgba(37,99,235,0.30)",
+                  transition: "transform .12s ease, box-shadow .12s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(37,99,235,0.40)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(37,99,235,0.30)"; }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                Read
+              </div>
+            </a>
           )}
           {book.description && (
             <div>

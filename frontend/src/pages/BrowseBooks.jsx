@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, createSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useMemo, useRef } from "react";
 import Header from "../components/Header";
 
@@ -490,6 +490,7 @@ function BookResults({ books, loading }) {
 }
 
 function PublicBrowse() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -504,6 +505,34 @@ function PublicBrowse() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  useEffect(() => {
+    const catId = searchParams.get("category");
+    if (catId) {
+      fetch("http://localhost:5000/categories")
+        .then((res) => res.json())
+        .then((allCats) => {
+          const found = (Array.isArray(allCats) ? allCats : []).find((c) => String(c.id) === catId);
+          if (found) selectCategory(found);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const selectCategory = (cat) => {
+    setSelectedCategory(cat);
+    setCategoryLoading(true);
+    fetch(`http://localhost:5000/books/category/${cat.id}`)
+      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
+      .then((data) => {
+        setCategoryBooks(Array.isArray(data) ? data : []);
+        setCategoryLoading(false);
+      })
+      .catch(() => {
+        setCategoryBooks([]);
+        setCategoryLoading(false);
+      });
+  };
 
   const handleSearch = async (q) => {
     setSearchQuery(q);
@@ -524,19 +553,8 @@ function PublicBrowse() {
   };
 
   const handleCategorySelect = (cat) => {
-    setSelectedCategory(cat);
-    setCategoryLoading(true);
-    fetch(`http://localhost:5000/books/category/${cat.id}`)
-      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
-      .then((data) => {
-        setCategoryBooks(Array.isArray(data) ? data : []);
-        setCategoryLoading(false);
-      })
-      .catch((err) => {
-        console.error("Category books fetch error:", err);
-        setCategoryBooks([]);
-        setCategoryLoading(false);
-      });
+    selectCategory(cat);
+    setSearchParams({ category: cat.id });
   };
 
   const content = () => {
@@ -548,7 +566,7 @@ function PublicBrowse() {
         <>
           <div style={{ marginBottom: 24, background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`, padding: 24 }}>
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => { setSelectedCategory(null); setSearchParams({}); }}
               style={{
                 padding: "8px 16px", borderRadius: 10, border: "none",
                 background: "#f1f5f9", color: "#334155", fontWeight: 700, fontSize: 13,
@@ -633,6 +651,7 @@ function LoggedInBrowse() {
   const location = useLocation();
   const pathname = normalizePathname(location.pathname);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -658,6 +677,34 @@ function LoggedInBrowse() {
     }
   }, [user?.id]);
 
+  useEffect(() => {
+    const catId = searchParams.get("category");
+    if (catId) {
+      fetch("http://localhost:5000/categories")
+        .then((res) => res.json())
+        .then((allCats) => {
+          const found = (Array.isArray(allCats) ? allCats : []).find((c) => String(c.id) === catId);
+          if (found) selectCategory(found);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const selectCategory = (cat) => {
+    setSelectedCategory(cat);
+    setCategoryLoading(true);
+    fetch(`http://localhost:5000/books/category/${cat.id}`)
+      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
+      .then((data) => {
+        setCategoryBooks(Array.isArray(data) ? data : []);
+        setCategoryLoading(false);
+      })
+      .catch(() => {
+        setCategoryBooks([]);
+        setCategoryLoading(false);
+      });
+  };
+
   const handleSearch = async (q) => {
     setSearchQuery(q);
     if (!q.trim()) {
@@ -677,19 +724,8 @@ function LoggedInBrowse() {
   };
 
   const handleCategorySelect = (cat) => {
-    setSelectedCategory(cat);
-    setCategoryLoading(true);
-    fetch(`http://localhost:5000/books/category/${cat.id}`)
-      .then((res) => { if (!res.ok) throw new Error("Failed"); return res.json(); })
-      .then((data) => {
-        setCategoryBooks(Array.isArray(data) ? data : []);
-        setCategoryLoading(false);
-      })
-      .catch((err) => {
-        console.error("Category books fetch error:", err);
-        setCategoryBooks([]);
-        setCategoryLoading(false);
-      });
+    selectCategory(cat);
+    setSearchParams({ category: cat.id });
   };
 
   const sidebarNav = [
@@ -712,7 +748,7 @@ function LoggedInBrowse() {
         <>
           <div style={{ marginBottom: 24, background: "#fff", borderRadius: 18, border: `1px solid ${borderColor}`, padding: 24 }}>
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => { setSelectedCategory(null); setSearchParams({}); }}
               style={{
                 padding: "8px 16px", borderRadius: 10, border: "none",
                 background: "#f1f5f9", color: "#334155", fontWeight: 700, fontSize: 13,

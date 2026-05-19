@@ -111,8 +111,8 @@ app.post("/books", (req, res) => {
   } = req.body;
 
   const sql = `INSERT INTO books 
-    (titulli, autori_id, kategoria_id, isbn, viti_botimit, gjuha, numri_faqeve, formati, madhesia_mb, shtegu_skedarit, foto_kopertines, description) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    (titulli, autori_id, kategoria_id, isbn, viti_botimit, gjuha, numri_faqeve, formati, madhesia_mb, shtegu_skedarit, foto_kopertines, description, pdf_link) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   db.query(
     sql,
@@ -129,6 +129,7 @@ app.post("/books", (req, res) => {
       shtegu_skedarit,
       foto_kopertines,
       description || null,
+      req.body.pdf_link || null,
     ],
     (err, result) => {
       if (err) {
@@ -152,9 +153,10 @@ app.put("/books/:id", (req, res) => {
     numri_faqeve,
     foto_kopertines,
     description,
+    pdf_link,
   } = req.body;
   const sql =
-    "UPDATE books SET titulli=?, autori_id=?, kategoria_id=?, isbn=?, viti_botimit=?, gjuha=?, numri_faqeve=?, foto_kopertines=?, description=? WHERE id=?";
+    "UPDATE books SET titulli=?, autori_id=?, kategoria_id=?, isbn=?, viti_botimit=?, gjuha=?, numri_faqeve=?, foto_kopertines=?, description=?, pdf_link=? WHERE id=?";
   db.query(
     sql,
     [
@@ -167,6 +169,7 @@ app.put("/books/:id", (req, res) => {
       numri_faqeve,
       foto_kopertines,
       description || null,
+      pdf_link || null,
       id,
     ],
     (err, result) => {
